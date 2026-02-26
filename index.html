@@ -818,6 +818,19 @@ function startSequencer() {
   document.getElementById('statusText').textContent = 'Playing';
 }
 
+// Resume audio after mobile tab-switch / lock screen
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && ctx && isPlaying) {
+    // Resume suspended AudioContext (requires prior user gesture — already happened)
+    if (ctx.state === 'suspended') ctx.resume();
+    // Reset scheduler timing so it doesn't try to catch up missed steps
+    nextStepTime = ctx.currentTime + 0.05;
+    // Restart setInterval in case browser killed it while backgrounded
+    if (schedulerTimer) clearInterval(schedulerTimer);
+    schedulerTimer = setInterval(scheduler, SCHEDULE_INTERVAL);
+  }
+});
+
 function stopSequencer() {
   if (!isPlaying) return;
   isPlaying = false;
