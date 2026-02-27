@@ -981,7 +981,7 @@ function makeMove(i) {
     msgEl.textContent = `Player ${currentPlayer} wins — BREAK`;
     msgEl.className = 'message-text win-break';
     document.getElementById('device').classList.add('win-break');
-    drawWinLine(win);
+    drawWinLine(win, currentPlayer);
     return;
   }
 
@@ -1026,11 +1026,12 @@ const WIN_LINE_COORDS = {
   '2,4,6': {x1:280,y1:20,x2:20,y2:280}      // diag TR-BL
 };
 
-function drawWinLine(cells) {
+function drawWinLine(cells, player) {
   const key = cells.join(',');
   const coords = WIN_LINE_COORDS[key];
   if (!coords) return;
   const line = document.getElementById('winLine');
+  line.style.stroke = player === 'X' ? 'var(--accent)' : 'var(--accent-o)';
   line.setAttribute('x1', coords.x1);
   line.setAttribute('y1', coords.y1);
   line.setAttribute('x2', coords.x2);
