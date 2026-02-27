@@ -155,7 +155,7 @@
     border-radius:10px; font-size:10px; letter-spacing:1px;
     text-transform:uppercase; text-align:center; z-index:20;
     pointer-events:none; opacity:0; line-height:1.6;
-    animation:hintFade 4s ease-in-out 0.5s forwards;
+    animation:hintFade 5s ease-in-out 0.5s forwards;
   }
   .intro-hint::after {
     content:''; position:absolute; bottom:-6px; left:50%; transform:translateX(-50%);
@@ -1295,7 +1295,7 @@ buildStepRow();
 if (!localStorage.getItem('mp401-intro-seen')) {
   const hint = document.createElement('div');
   hint.className = 'intro-hint';
-  hint.textContent = 'Claim 3 in a row to win\u2009—\u2009each pad adds a layer';
+  hint.innerHTML = 'Tic-tac-toe meets sampler<br>Each move activates an instrument';
   document.getElementById('gridContainer').appendChild(hint);
   localStorage.setItem('mp401-intro-seen', '1');
   hint.addEventListener('animationend', () => hint.remove());
