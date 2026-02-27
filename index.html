@@ -290,11 +290,7 @@
     justify-content:space-between; min-height:40px;
     transition:background 0.5s ease, border-color 0.5s ease;
   }
-  .message-text { font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey-light); cursor:default; }
-  .message-text.audio-fix {
-    color:var(--accent); font-weight:700; cursor:pointer;
-    animation:breakFlash 1s ease infinite;
-  }
+  .message-text { font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey-light); }
   .message-text.win { color:var(--accent); font-weight:700; }
   .message-text.win-break { color:var(--accent); animation:breakFlash 0.5s ease infinite; }
   .message-text.draw { color:var(--text-dim); }
@@ -480,8 +476,6 @@ const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let ctx, masterGain, masterComp, noiseBuffer;
 
 function initAudio() {
-  // If browser killed the context, clear it so we recreate
-  if (ctx && ctx.state === 'closed') { ctx = null; noiseBuffer = null; }
   if (ctx) return;
   ctx = new AudioCtx();
   masterComp = ctx.createDynamicsCompressor();
@@ -494,33 +488,6 @@ function initAudio() {
   masterGain = ctx.createGain();
   masterGain.gain.value = 0.65;
   masterGain.connect(masterComp);
-}
-
-// Resume audio context and restart scheduler (safe to call anytime)
-function resumeAudio() {
-  if (!ctx) return;
-  if (ctx.state === 'suspended' || ctx.state === 'interrupted') ctx.resume();
-  if (isPlaying) {
-    nextStepTime = ctx.currentTime + 0.05;
-    if (schedulerTimer) clearInterval(schedulerTimer);
-    schedulerTimer = setInterval(scheduler, SCHEDULE_INTERVAL);
-  }
-}
-
-function showAudioFix() {
-  const msg = document.getElementById('message');
-  if (msg.classList.contains('audio-fix')) return;
-  msg.dataset.prevText = msg.textContent;
-  msg.dataset.prevClass = msg.className;
-  msg.textContent = 'Audio paused — Tap anywhere to restore';
-  msg.className = 'message-text audio-fix';
-}
-
-function hideAudioFix() {
-  const msg = document.getElementById('message');
-  if (!msg.classList.contains('audio-fix')) return;
-  msg.textContent = msg.dataset.prevText || '';
-  msg.className = msg.dataset.prevClass || 'message-text';
 }
 
 function noise() {
@@ -869,21 +836,14 @@ function startSequencer() {
 // Resume audio after mobile tab-switch / lock screen
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible' && ctx && isPlaying) {
-    resumeAudio();
-    // visibilitychange is not a user gesture on iOS — resume may silently fail
-    // Check after a delay and show fix message if still stuck
-    setTimeout(() => {
-      if (ctx && ctx.state !== 'running' && isPlaying) showAudioFix();
-    }, 500);
+    // Resume suspended AudioContext (requires prior user gesture — already happened)
+    if (ctx.state === 'suspended') ctx.resume();
+    // Reset scheduler timing so it doesn't try to catch up missed steps
+    nextStepTime = ctx.currentTime + 0.05;
+    // Restart setInterval in case browser killed it while backgrounded
+    if (schedulerTimer) clearInterval(schedulerTimer);
+    schedulerTimer = setInterval(scheduler, SCHEDULE_INTERVAL);
   }
-});
-
-// Safety net — any touch/click resumes audio (this IS a user gesture, so it works on iOS)
-document.addEventListener('touchstart', () => {
-  if (ctx && ctx.state !== 'running') { resumeAudio(); hideAudioFix(); }
-}, { passive: true });
-document.addEventListener('click', () => {
-  if (ctx && ctx.state !== 'running') { resumeAudio(); hideAudioFix(); }
 });
 
 function stopSequencer() {
@@ -948,11 +908,6 @@ const WINS = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
 const gridEl = document.getElementById('grid');
 const msgEl = document.getElementById('message');
 const layerEl = document.getElementById('layerCount');
-
-// Tap-to-restore handler on message bar
-msgEl.addEventListener('click', () => {
-  if (msgEl.classList.contains('audio-fix')) { resumeAudio(); hideAudioFix(); }
-});
 
 function buildGrid() {
   gridEl.innerHTML = '';
