@@ -479,7 +479,11 @@
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let ctx, masterGain, masterComp, noiseBuffer;
 
-function createAudioGraph() {
+function initAudio() {
+  // If browser killed the context, clear it so we recreate
+  if (ctx && ctx.state === 'closed') { ctx = null; noiseBuffer = null; }
+  if (ctx) return;
+  ctx = new AudioCtx();
   masterComp = ctx.createDynamicsCompressor();
   masterComp.threshold.value = -10;
   masterComp.knee.value = 8;
@@ -490,55 +494,17 @@ function createAudioGraph() {
   masterGain = ctx.createGain();
   masterGain.gain.value = 0.65;
   masterGain.connect(masterComp);
-  noiseBuffer = null; // regenerate on next use
 }
 
-function initAudio() {
-  if (ctx && ctx.state !== 'closed') return;
-  // If context was closed/killed, recreate it
-  ctx = new AudioCtx();
-  createAudioGraph();
-  // Watch for unexpected state changes (iOS interruptions, etc.)
-  ctx.onstatechange = handleAudioStateChange;
-}
-
-function handleAudioStateChange() {
+// Resume audio context and restart scheduler (safe to call anytime)
+function resumeAudio() {
   if (!ctx) return;
-  if (ctx.state === 'running') hideAudioFix();
-}
-
-// Reset scheduler timing and restart interval
-function restartScheduler() {
-  if (!isPlaying) return;
-  nextStepTime = ctx.currentTime + 0.05;
-  if (schedulerTimer) clearInterval(schedulerTimer);
-  schedulerTimer = setInterval(scheduler, SCHEDULE_INTERVAL);
-}
-
-// Ensure audio context is alive; recreate if closed
-function ensureContext() {
-  if (!ctx || ctx.state === 'closed') {
-    ctx = new AudioCtx();
-    createAudioGraph();
-    ctx.onstatechange = handleAudioStateChange;
+  if (ctx.state === 'suspended' || ctx.state === 'interrupted') ctx.resume();
+  if (isPlaying) {
+    nextStepTime = ctx.currentTime + 0.05;
+    if (schedulerTimer) clearInterval(schedulerTimer);
+    schedulerTimer = setInterval(scheduler, SCHEDULE_INTERVAL);
   }
-}
-
-// Try to resume audio — call this from user gestures for best results
-function tryAudioResume() {
-  ensureContext();
-  if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
-    ctx.resume();
-  }
-  restartScheduler();
-  // Check after a delay — if still not running, show the fix message
-  setTimeout(() => {
-    if (ctx.state === 'running') {
-      hideAudioFix();
-    } else if (isPlaying) {
-      showAudioFix();
-    }
-  }, 300);
 }
 
 function showAudioFix() {
@@ -900,29 +866,25 @@ function startSequencer() {
   document.getElementById('statusText').textContent = 'Playing';
 }
 
-// Resume audio after mobile tab-switch / lock screen / interruptions
+// Resume audio after mobile tab-switch / lock screen
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && ctx) {
-    // Try resume (may fail on iOS without user gesture — that's OK)
-    if (ctx.state === 'suspended' || ctx.state === 'interrupted') ctx.resume();
-    // Always restart scheduler so step dots keep moving
-    restartScheduler();
-    // After a delay, check if audio is still stuck and show fix message
+  if (document.visibilityState === 'visible' && ctx && isPlaying) {
+    resumeAudio();
+    // visibilitychange is not a user gesture on iOS — resume may silently fail
+    // Check after a delay and show fix message if still stuck
     setTimeout(() => {
-      if (ctx.state !== 'running' && isPlaying) showAudioFix();
+      if (ctx && ctx.state !== 'running' && isPlaying) showAudioFix();
     }, 500);
   }
 });
 
-// Global touch/click safety net — resume audio on any user gesture
-function onGlobalInteraction() {
-  if (!ctx) return;
-  if (ctx.state === 'suspended' || ctx.state === 'interrupted' || ctx.state === 'closed') {
-    tryAudioResume();
-  }
-}
-document.addEventListener('touchstart', onGlobalInteraction, { passive: true });
-document.addEventListener('click', onGlobalInteraction);
+// Safety net — any touch/click resumes audio (this IS a user gesture, so it works on iOS)
+document.addEventListener('touchstart', () => {
+  if (ctx && ctx.state !== 'running') { resumeAudio(); hideAudioFix(); }
+}, { passive: true });
+document.addEventListener('click', () => {
+  if (ctx && ctx.state !== 'running') { resumeAudio(); hideAudioFix(); }
+});
 
 function stopSequencer() {
   if (!isPlaying) return;
@@ -989,7 +951,7 @@ const layerEl = document.getElementById('layerCount');
 
 // Tap-to-restore handler on message bar
 msgEl.addEventListener('click', () => {
-  if (msgEl.classList.contains('audio-fix')) tryAudioResume();
+  if (msgEl.classList.contains('audio-fix')) { resumeAudio(); hideAudioFix(); }
 });
 
 function buildGrid() {
