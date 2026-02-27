@@ -504,32 +504,41 @@ function initAudio() {
 
 function handleAudioStateChange() {
   if (!ctx) return;
-  if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
-    if (isPlaying) showAudioFix();
-  } else if (ctx.state === 'running') {
-    hideAudioFix();
-  }
+  if (ctx.state === 'running') hideAudioFix();
 }
 
-// Attempt to silently recover audio; show message if it fails
-function tryAudioRecovery() {
-  if (!ctx) return;
-  if (ctx.state === 'closed') {
-    // Context is dead — recreate
+// Reset scheduler timing and restart interval
+function restartScheduler() {
+  if (!isPlaying) return;
+  nextStepTime = ctx.currentTime + 0.05;
+  if (schedulerTimer) clearInterval(schedulerTimer);
+  schedulerTimer = setInterval(scheduler, SCHEDULE_INTERVAL);
+}
+
+// Ensure audio context is alive; recreate if closed
+function ensureContext() {
+  if (!ctx || ctx.state === 'closed') {
     ctx = new AudioCtx();
     createAudioGraph();
     ctx.onstatechange = handleAudioStateChange;
   }
+}
+
+// Try to resume audio — call this from user gestures for best results
+function tryAudioResume() {
+  ensureContext();
   if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
-    ctx.resume().then(() => {
-      hideAudioFix();
-      if (isPlaying) {
-        nextStepTime = ctx.currentTime + 0.05;
-        if (schedulerTimer) clearInterval(schedulerTimer);
-        schedulerTimer = setInterval(scheduler, SCHEDULE_INTERVAL);
-      }
-    }).catch(() => showAudioFix());
+    ctx.resume();
   }
+  restartScheduler();
+  // Check after a delay — if still not running, show the fix message
+  setTimeout(() => {
+    if (ctx.state === 'running') {
+      hideAudioFix();
+    } else if (isPlaying) {
+      showAudioFix();
+    }
+  }, 300);
 }
 
 function showAudioFix() {
@@ -537,7 +546,7 @@ function showAudioFix() {
   if (msg.classList.contains('audio-fix')) return;
   msg.dataset.prevText = msg.textContent;
   msg.dataset.prevClass = msg.className;
-  msg.textContent = 'Audio paused — Tap here to restore';
+  msg.textContent = 'Audio paused — Tap anywhere to restore';
   msg.className = 'message-text audio-fix';
 }
 
@@ -894,14 +903,22 @@ function startSequencer() {
 // Resume audio after mobile tab-switch / lock screen / interruptions
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible' && ctx) {
-    tryAudioRecovery();
+    // Try resume (may fail on iOS without user gesture — that's OK)
+    if (ctx.state === 'suspended' || ctx.state === 'interrupted') ctx.resume();
+    // Always restart scheduler so step dots keep moving
+    restartScheduler();
+    // After a delay, check if audio is still stuck and show fix message
+    setTimeout(() => {
+      if (ctx.state !== 'running' && isPlaying) showAudioFix();
+    }, 500);
   }
 });
 
-// Global touch/click safety net — resume audio on any interaction
+// Global touch/click safety net — resume audio on any user gesture
 function onGlobalInteraction() {
-  if (ctx && (ctx.state === 'suspended' || ctx.state === 'interrupted')) {
-    tryAudioRecovery();
+  if (!ctx) return;
+  if (ctx.state === 'suspended' || ctx.state === 'interrupted' || ctx.state === 'closed') {
+    tryAudioResume();
   }
 }
 document.addEventListener('touchstart', onGlobalInteraction, { passive: true });
@@ -972,7 +989,7 @@ const layerEl = document.getElementById('layerCount');
 
 // Tap-to-restore handler on message bar
 msgEl.addEventListener('click', () => {
-  if (msgEl.classList.contains('audio-fix')) tryAudioRecovery();
+  if (msgEl.classList.contains('audio-fix')) tryAudioResume();
 });
 
 function buildGrid() {
