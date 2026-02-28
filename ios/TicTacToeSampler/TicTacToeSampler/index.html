@@ -1108,8 +1108,15 @@ function startSequencer() {
 // On iOS WKWebView, ctx.resume() can resolve successfully while the
 // underlying audio hardware path stays disconnected.  The only reliable
 // recovery is to tear down the old AudioContext and build a fresh one.
+let _resumeInFlight = false;
 function resumeAudioPlayback() {
   if (!isPlaying) return;
+  if (_resumeInFlight) return;          // debounce double-calls from Swift
+  _resumeInFlight = true;
+  setTimeout(() => { _resumeInFlight = false; }, 1500);
+
+  // Stop the old scheduler immediately
+  if (schedulerTimer) { clearInterval(schedulerTimer); schedulerTimer = null; }
 
   // Tear down the old (possibly broken) AudioContext
   if (ctx) {
@@ -1118,19 +1125,22 @@ function resumeAudioPlayback() {
   ctx = null;
   noiseBuffer = null;
 
-  // Build a brand-new AudioContext + master chain
-  initAudio();
+  // Small delay lets iOS audio hardware fully reset before we re-init
+  setTimeout(function() {
+    // Build a brand-new AudioContext + master chain
+    initAudio();
 
-  if (ctx) {
-    ctx.resume().then(function() {
-      console.log('AudioContext recreated & resumed: ' + ctx.state);
-      nextStepTime = ctx.currentTime + 0.05;
-      if (schedulerTimer) clearInterval(schedulerTimer);
-      schedulerTimer = setInterval(scheduler, SCHEDULE_INTERVAL);
-    }).catch(function(e) {
-      console.log('AudioContext resume failed after recreate: ' + e);
-    });
-  }
+    if (ctx) {
+      ctx.resume().then(function() {
+        console.log('AudioContext recreated & resumed: ' + ctx.state);
+        nextStepTime = ctx.currentTime + 0.05;
+        if (schedulerTimer) clearInterval(schedulerTimer);
+        schedulerTimer = setInterval(scheduler, SCHEDULE_INTERVAL);
+      }).catch(function(e) {
+        console.log('AudioContext resume failed after recreate: ' + e);
+      });
+    }
+  }, 100);
 }
 
 document.addEventListener('visibilitychange', () => {
@@ -1140,6 +1150,11 @@ document.addEventListener('visibilitychange', () => {
 // iOS WKWebView may not always fire visibilitychange; pageshow is a backup
 window.addEventListener('pageshow', (e) => {
   if (e.persisted) resumeAudioPlayback();
+});
+
+// iOS sometimes doesn't fire visibilitychange on lock/unlock — use focus as extra trigger
+window.addEventListener('focus', () => {
+  if (isPlaying && ctx && ctx.state === 'interrupted') resumeAudioPlayback();
 });
 
 function stopSequencer() {
