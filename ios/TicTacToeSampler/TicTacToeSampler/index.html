@@ -430,7 +430,50 @@
   .footer {
     margin-top:14px; text-align:center; font-size:8px;
     letter-spacing:3px; text-transform:uppercase; color:var(--grey);
+    position:relative;
   }
+  .info-btn {
+    position:absolute; right:0; top:50%; transform:translateY(-50%);
+    background:none; border:1px solid var(--border); border-radius:50%;
+    width:18px; height:18px; font-size:10px; line-height:16px; text-align:center;
+    color:var(--grey); cursor:pointer; font-family:'Space Mono',monospace;
+    transition:color 0.3s, border-color 0.3s;
+  }
+  .info-btn:hover, .info-btn:active { color:var(--accent); border-color:var(--accent); }
+  .info-overlay {
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.6); z-index:9998;
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none; transition:opacity 0.3s ease;
+  }
+  .info-overlay.open { opacity:1; pointer-events:auto; }
+  .info-panel {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:12px; padding:24px 20px; max-width:300px; width:85%;
+    text-align:center; color:var(--text);
+  }
+  .info-panel h3 {
+    font-family:'Space Grotesk',sans-serif; font-size:14px;
+    letter-spacing:1px; margin:0 0 4px; text-transform:uppercase;
+  }
+  .info-panel .info-sub {
+    font-size:9px; color:var(--grey); letter-spacing:2px;
+    text-transform:uppercase; margin-bottom:16px;
+  }
+  .info-panel .info-links { list-style:none; padding:0; margin:12px 0; }
+  .info-panel .info-links li { margin:10px 0; }
+  .info-panel .info-links a {
+    color:var(--accent); text-decoration:none; font-size:12px;
+    letter-spacing:0.5px; font-family:'Space Grotesk',sans-serif;
+  }
+  .info-panel .info-links a:hover { text-decoration:underline; }
+  .info-panel .info-close {
+    margin-top:16px; background:none; border:1px solid var(--border);
+    border-radius:6px; padding:6px 20px; color:var(--grey); cursor:pointer;
+    font-size:9px; letter-spacing:2px; text-transform:uppercase;
+    font-family:'Space Grotesk',sans-serif; transition:color 0.3s, border-color 0.3s;
+  }
+  .info-panel .info-close:hover { color:var(--accent); border-color:var(--accent); }
 
   /* SPLASH SCREEN */
   .splash {
@@ -684,7 +727,21 @@
     </div>
   </div>
 
-  <div class="footer" id="footer">MP × EP-401 — 2026</div>
+  <div class="footer"><span id="footer">MP × EP-401 — 2026</span><button class="info-btn" id="infoBtn" aria-label="Info">i</button></div>
+</div>
+
+<div class="info-overlay" id="infoOverlay">
+  <div class="info-panel">
+    <h3>Tic Tac Toe Sampler</h3>
+    <div class="info-sub">v1.0</div>
+    <p style="font-size:11px;color:var(--text-dim);margin:0 0 8px;line-height:1.5;">A music-making game where every move on the grid activates an instrument.</p>
+    <ul class="info-links">
+      <li><a href="https://dave-suzuki.github.io/tic-tak-toe-sampler/docs/support.html" target="_blank" rel="noopener">Support &amp; FAQ</a></li>
+      <li><a href="https://dave-suzuki.github.io/tic-tak-toe-sampler/docs/privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a></li>
+      <li><a href="mailto:info@crosstown-experience.com">Contact</a></li>
+    </ul>
+    <button class="info-close" id="infoClose">Close</button>
+  </div>
 </div>
 
 <script>
@@ -2164,6 +2221,17 @@ setTimeout(() => {
     splash.addEventListener('transitionend', () => splash.remove());
   }
 }, 1800);
+
+// Info panel open/close
+document.getElementById('infoBtn').addEventListener('click', () => {
+  document.getElementById('infoOverlay').classList.add('open');
+});
+document.getElementById('infoClose').addEventListener('click', () => {
+  document.getElementById('infoOverlay').classList.remove('open');
+});
+document.getElementById('infoOverlay').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
+});
 
 // First-time intro hint
 if (!localStorage.getItem('mp401-intro-seen')) {
