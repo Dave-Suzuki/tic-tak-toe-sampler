@@ -65,6 +65,14 @@ struct WebView: UIViewRepresentable {
             }
         }
 
+        func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+            webView.reload()
+        }
+
+        func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+            webView.reload()
+        }
+
         func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
             webView.reload()
         }
