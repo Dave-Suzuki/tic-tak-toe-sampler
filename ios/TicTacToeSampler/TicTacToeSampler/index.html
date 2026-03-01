@@ -752,18 +752,18 @@ function applyFilterKnob() {
 
 function initAudio() {
   if (ctx) return;
-  ctx = new AudioCtx();
+  ctx = new AudioCtx({ latencyHint: 'playback' });
   masterComp = ctx.createDynamicsCompressor();
-  masterComp.threshold.value = -10;
-  masterComp.knee.value = 8;
-  masterComp.ratio.value = 6;
-  masterComp.attack.value = 0.002;
-  masterComp.release.value = 0.12;
+  masterComp.threshold.value = -14;
+  masterComp.knee.value = 12;
+  masterComp.ratio.value = 4;
+  masterComp.attack.value = 0.008;
+  masterComp.release.value = 0.15;
   masterComp.connect(ctx.destination);
   // FX: Distortion (always in chain; null curve = passthrough)
   fxDistortion = ctx.createWaveShaper();
   fxDistortion.curve = fxPad2X > 0.01 ? makeDistortionCurve(fxPad2X * 30) : null;
-  fxDistortion.oversample = '4x';
+  fxDistortion.oversample = fxPad2X > 0.01 ? '4x' : 'none';
 
   // FX: Filter knob (always in chain)
   fxFilter = ctx.createBiquadFilter();
@@ -986,8 +986,11 @@ const synth = {
     n2.connect(hp); hp.connect(g2); g2.connect(masterGain);
     n2.start(time); lfo2.start(time);
     n2.stop(time + dur + 0.1); lfo2.stop(time + dur + 0.1);
-    // Layer 3: Random droplets
-    const drops = p.drops || 6;
+    // Layer 3: Random droplets (limited to 3 for mobile perf)
+    const drops = Math.min(p.drops || 6, 3);
+    const dropBus = ctx.createGain();
+    dropBus.gain.value = 1;
+    dropBus.connect(masterGain);
     for (let i = 0; i < drops; i++) {
       const dt = time + atk * 0.3 + Math.random() * (dur - atk * 0.5);
       const dd = 0.01 + Math.random() * 0.015;
@@ -999,9 +1002,7 @@ const synth = {
       fd.Q.value = 1 + Math.random() * 3;
       gd.gain.setValueAtTime(p.dropVol || 0.025, dt);
       gd.gain.exponentialRampToValueAtTime(0.001, dt + dd);
-      const pan = ctx.createStereoPanner();
-      pan.pan.value = (Math.random() - 0.5) * 1.6;
-      nd.connect(fd); fd.connect(gd); gd.connect(pan); pan.connect(masterGain);
+      nd.connect(fd); fd.connect(gd); gd.connect(dropBus);
       nd.start(dt); nd.stop(dt + dd + 0.01);
     }
   },
@@ -1319,7 +1320,7 @@ const STYLES = {
       {name:'KEYS',icon:'≡',type:'chord',pattern:[0,0,1,0,0,0,0,2,0,0,0,0,1,0,0,0],params:{chords:[[174.61,261.63,329.63,440],[146.83,220,261.63,349.23]],wave:'sine',filterFreq:380,filterQ:0.3,vol:0.035,decay:0.7,detune:1.008,sustain:0.5}},
       {name:'ARP',icon:'⟋',type:'arp',pattern:[0,0,0,0,523.25,0,0,0,0,440,0,0,0,349.23,0,0],params:{wave:'sine',filterStart:1500,filterEnd:400,vol:0.035,decay:0.15}},
       {name:'RAIN',icon:'◆',type:'rain',pattern:[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],params:{vol:0.02,dur:2.8,attack:0.9,release:0.9,lpFreq:700,hpFreq:3500,lfoRate:0.25,lfoDepth:0.006,drops:6,dropVol:0.01}},
-      {name:'PAD',icon:'∿',type:'pad',pattern:[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],params:{freqs:[174.61,220,261.63,329.63],wave:'sine',wave2:'sine',filterFreq:200,filterQ:0.15,vol:0.02,dur:4.0,attack:1.5,detune:1.004}},
+      {name:'PAD',icon:'∿',type:'pad',pattern:[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],params:{freqs:[174.61,220],wave:'sine',wave2:'sine',filterFreq:200,filterQ:0.15,vol:0.03,dur:4.0,attack:1.5,detune:1.004}},
       {name:'MELDC',icon:'◁',type:'lead',pattern:[0,0,0,0,0,349.23,0,0,329.63,0,0,293.66,0,349.23,0,0],params:{wave:'triangle',wave2:'sine',filterStart:1000,filterEnd:350,vol:0.04,decay:0.25,detune:1.003}}
     ]
   },
@@ -2071,7 +2072,9 @@ function updateFxDelayTime() {
 
 function updateFxDistortion() {
   if (fxDistortion) {
-    fxDistortion.curve = fxPad2X > 0.01 ? makeDistortionCurve(fxPad2X * 30) : null;
+    const active = fxPad2X > 0.01;
+    fxDistortion.curve = active ? makeDistortionCurve(fxPad2X * 30) : null;
+    fxDistortion.oversample = active ? '4x' : 'none';
   }
 }
 
