@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>tic-tac-toe-sampler</title>
+<title>tic-tac-tone</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='12' fill='%23F05A24'/><line x1='34' y1='10' x2='34' y2='90' stroke='%23fff' stroke-width='4' stroke-linecap='round'/><line x1='66' y1='10' x2='66' y2='90' stroke='%23fff' stroke-width='4' stroke-linecap='round'/><line x1='10' y1='34' x2='90' y2='34' stroke='%23fff' stroke-width='4' stroke-linecap='round'/><line x1='10' y1='66' x2='90' y2='66' stroke='%23fff' stroke-width='4' stroke-linecap='round'/><circle cx='50' cy='50' r='8' fill='none' stroke='%23fff' stroke-width='3'/><circle cx='18' cy='18' r='4' fill='%23fff'/><circle cx='82' cy='82' r='4' fill='%23fff'/><circle cx='82' cy='18' r='4' fill='%23fff'/></svg>">
 <style>
   @font-face {
@@ -596,8 +596,8 @@
       <circle class="s-dot" cx="82" cy="18" r="4" fill="#fff"/>
       <circle class="s-ring" cx="50" cy="50" r="8" fill="none" stroke="#fff" stroke-width="3"/>
     </svg>
-    <div class="splash-title">EP-401</div>
-    <div class="splash-sub">tic · tac · toe · sampler</div>
+    <div class="splash-title">Tic Tac Tone</div>
+    <div class="splash-sub">play a game · make a beat</div>
   </div>
 </div>
 
@@ -606,8 +606,8 @@
 <div class="device" id="device">
   <div class="header">
     <div>
-      <div class="model-name" id="modelName">Mid-Age Prototyping</div>
-      <div class="model-id"><span id="modelId">MP-401</span><span class="model-sub" id="modelSub">retirement fund</span></div>
+      <div class="model-name" id="modelName">Tic Tac Tone</div>
+      <div class="model-id"><span id="modelId">HH-90</span><span class="model-sub" id="modelSub">hip-hop</span></div>
     </div>
     <div class="status-block">
       <div><span class="status-dot"></span><span class="status-text" id="statusText">Stopped</span></div>
@@ -727,12 +727,12 @@
     </div>
   </div>
 
-  <div class="footer"><span id="footer">MP × EP-401 — 2026</span><button class="info-btn" id="infoBtn" aria-label="Info">i</button></div>
+  <div class="footer"><span id="footer">TTT × HH-90 — 2026</span><button class="info-btn" id="infoBtn" aria-label="Info">i</button></div>
 </div>
 
 <div class="info-overlay" id="infoOverlay">
   <div class="info-panel">
-    <h3>Tic Tac Toe Sampler</h3>
+    <h3>Tic Tac Tone</h3>
     <div class="info-sub">v1.0</div>
     <p style="font-size:11px;color:var(--text-dim);margin:0 0 8px;line-height:1.5;">A music-making game where every move on the grid activates an instrument.</p>
     <ul class="info-links">
@@ -1238,8 +1238,8 @@ function getVariedPattern(pat, type, bar) {
 // ============================================================
 const STYLES = {
   hiphop: {
-    modelName:'Mid-Age Prototyping', modelId:'EP-401', modelSub:'retirement fund',
-    footer:'MP × EP-401 — 2026', bpm:90,
+    modelName:'Tic Tac Tone', modelId:'HH-90', modelSub:'hip-hop',
+    footer:'TTT × HH-90 — 2026', bpm:90,
     theme: {
       '--accent':'#F05A24','--accent-glow':'#FF7B44',
       '--accent-10':'rgba(240,90,36,0.1)','--accent-20':'rgba(240,90,36,0.2)',
@@ -1262,8 +1262,8 @@ const STYLES = {
     ]
   },
   techno: {
-    modelName:'Mid-Age Prototyping', modelId:'OB-40', modelSub:'over the hill',
-    footer:'MP × OB-40 — 2026', bpm:128,
+    modelName:'Tic Tac Tone', modelId:'TK-128', modelSub:'techno',
+    footer:'TTT × TK-128 — 2026', bpm:128,
     theme: {
       '--accent':'#B81D13','--accent-glow':'#D83020',
       '--accent-10':'rgba(184,29,19,0.12)','--accent-20':'rgba(184,29,19,0.25)',
@@ -1286,8 +1286,8 @@ const STYLES = {
     ]
   },
   ambient: {
-    modelName:'Mid-Age Prototyping', modelId:'MD-LFE', modelSub:'midlife crisis',
-    footer:'MP × MD-LFE field — 2026', bpm:75,
+    modelName:'Tic Tac Tone', modelId:'AM-75', modelSub:'ambient',
+    footer:'TTT × AM-75 — 2026', bpm:75,
     theme: {
       '--accent':'#4A90D9','--accent-glow':'#6AB0F9',
       '--accent-10':'rgba(74,144,217,0.1)','--accent-20':'rgba(74,144,217,0.2)',
@@ -1310,8 +1310,8 @@ const STYLES = {
     ]
   },
   chiptune: {
-    modelName:'Mid-Age Prototyping', modelId:'PO-50', modelSub:'half a century',
-    footer:'MP × PO-50 — 2026', bpm:140,
+    modelName:'Tic Tac Tone', modelId:'CT-140', modelSub:'chiptune',
+    footer:'TTT × CT-140 — 2026', bpm:140,
     theme: {
       '--accent':'#FFCC00','--accent-glow':'#FFE040',
       '--accent-10':'rgba(255,204,0,0.1)','--accent-20':'rgba(255,204,0,0.25)',
@@ -1334,8 +1334,8 @@ const STYLES = {
     ]
   },
   jungle: {
-    modelName:'Mid-Age Prototyping', modelId:'BD-NES', modelSub:'bad knees',
-    footer:'MP × BD-NES — 2026', bpm:155,
+    modelName:'Tic Tac Tone', modelId:'JG-155', modelSub:'jungle',
+    footer:'TTT × JG-155 — 2026', bpm:155,
     theme: {
       '--accent':'#22C55E','--accent-glow':'#4ADE80',
       '--accent-10':'rgba(34,197,94,0.1)','--accent-20':'rgba(34,197,94,0.2)',
@@ -1358,8 +1358,8 @@ const STYLES = {
     ]
   },
   lofi: {
-    modelName:'Mid-Age Prototyping', modelId:'LO-BP', modelSub:'lower back',
-    footer:'MP × LO-BP — 2026', bpm:79,
+    modelName:'Tic Tac Tone', modelId:'LF-79', modelSub:'lo-fi',
+    footer:'TTT × LF-79 — 2026', bpm:79,
     theme: {
       '--accent':'#D4736E','--accent-glow':'#E89490',
       '--accent-10':'rgba(212,115,110,0.1)','--accent-20':'rgba(212,115,110,0.2)',
@@ -1382,8 +1382,8 @@ const STYLES = {
     ]
   },
   house: {
-    modelName:'Mid-Age Prototyping', modelId:'MR-TG', modelSub:'second mortgage',
-    footer:'MP × MR-TG — 2026', bpm:124,
+    modelName:'Tic Tac Tone', modelId:'HS-124', modelSub:'house',
+    footer:'TTT × HS-124 — 2026', bpm:124,
     theme: {
       '--accent':'#8B5CF6','--accent-glow':'#A78BFA',
       '--accent-10':'rgba(139,92,246,0.1)','--accent-20':'rgba(139,92,246,0.2)',
@@ -1406,8 +1406,8 @@ const STYLES = {
     ]
   },
   ragga: {
-    modelName:'Mid-Age Prototyping', modelId:'YA-RD', modelSub:'lawn care',
-    footer:'MP × YA-RD — 2026', bpm:88,
+    modelName:'Tic Tac Tone', modelId:'RG-88', modelSub:'ragga',
+    footer:'TTT × RG-88 — 2026', bpm:88,
     theme: {
       '--accent':'#C86830','--accent-glow':'#E08848',
       '--accent-10':'rgba(200,104,48,0.1)','--accent-20':'rgba(200,104,48,0.2)',
@@ -2237,7 +2237,7 @@ document.getElementById('infoOverlay').addEventListener('click', (e) => {
 if (!localStorage.getItem('mp401-intro-seen')) {
   const hint = document.createElement('div');
   hint.className = 'intro-hint';
-  hint.innerHTML = 'Tic-tac-toe meets sampler<br>Each move activates an instrument';
+  hint.innerHTML = 'Tic-tac-toe meets synthesizer<br>Each move activates an instrument';
   document.getElementById('gridContainer').appendChild(hint);
   localStorage.setItem('mp401-intro-seen', '1');
   hint.addEventListener('animationend', () => hint.remove());

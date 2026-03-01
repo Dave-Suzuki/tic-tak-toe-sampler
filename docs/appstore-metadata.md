@@ -1,13 +1,13 @@
 # App Store Metadata
 
 ## App Name
-Tic Tac Toe Sampler
+Tic Tac Tone
 
 ## Subtitle (30 chars max)
 Play a game, make a beat
 
 ## Description
-Tic Tac Toe Sampler turns the classic game into a music-making experience. Every move on the 3x3 grid activates an instrument — kick, snare, bass, keys, pads, and more. Two players take turns claiming pads, and each claimed square adds a new layer to a looping beat. Get three in a row to win.
+Tic Tac Tone turns the classic game into a music-making experience. Every move on the 3x3 grid activates a synthesized instrument — kick, snare, bass, keys, pads, and more. Two players take turns claiming pads, and each claimed square adds a new layer to a looping beat. Get three in a row to win.
 
 Choose from 8 music styles including Hip-Hop, Lo-Fi, House, Techno, Jungle, Ragga, Ambient, and Chiptune. Each genre brings its own instruments, tempo, and color scheme.
 
@@ -24,7 +24,7 @@ No ads. No tracking. No internet required. Just music and strategy.
 A tic-tac-toe game where every move builds a beat. 8 genres, real-time effects, and zero ads. Play a game, make a track.
 
 ## Keywords (100 chars max, comma-separated)
-tic-tac-toe,music,sampler,beat maker,game,lo-fi,hip-hop,sequencer,instrument,rhythm
+tic-tac-toe,music,synthesizer,beat maker,game,lo-fi,hip-hop,sequencer,instrument,rhythm
 
 ## Category
 Primary: Games
