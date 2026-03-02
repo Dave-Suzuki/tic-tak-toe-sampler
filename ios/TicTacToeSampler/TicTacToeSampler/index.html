@@ -1605,15 +1605,31 @@ function freqToNoteName(freq) {
   return NOTE_NAMES[((midi % 12) + 12) % 12] + (Math.floor(midi / 12) - 1);
 }
 function getGenreScale(styleKey) {
-  const freqs = new Set();
+  // Extract unique pitch classes from genre's melodic patterns
+  const pitchClasses = new Set();
   const style = STYLES[styleKey || currentStyleKey];
   const defs = DEFAULT_PATTERNS[styleKey || currentStyleKey];
   style.instruments.forEach((inst, i) => {
     if (['bass','lead','arp'].includes(inst.type)) {
-      defs[i].forEach(v => { if (v > 0) freqs.add(v); });
+      defs[i].forEach(v => {
+        if (v > 0) {
+          const midi = Math.round(12 * Math.log2(v / 440) + 69);
+          pitchClasses.add(((midi % 12) + 12) % 12);
+        }
+      });
     }
   });
-  return [...freqs].sort((a, b) => a - b);
+  // Generate notes across octaves 1-5 using the genre's pitch classes
+  const sorted = [...pitchClasses].sort((a, b) => a - b);
+  const result = [];
+  for (let octave = 1; octave <= 5; octave++) {
+    for (const pc of sorted) {
+      const midi = pc + (octave + 1) * 12; // octave 1 = MIDI 24+
+      const freq = 440 * Math.pow(2, (midi - 69) / 12);
+      if (freq >= 30 && freq <= 2000) result.push(freq);
+    }
+  }
+  return result;
 }
 
 // ============================================================
