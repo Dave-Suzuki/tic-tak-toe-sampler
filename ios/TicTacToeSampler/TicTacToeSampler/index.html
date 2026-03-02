@@ -2453,6 +2453,8 @@ function makeMove(i) {
 
     winPhase = 'break';
     winStepsLeft = 32;
+    // Force-activate bass + pad so break always has sound
+    BREAK_SOLO.forEach(i => { activeCells[i] = true; });
     msgEl.textContent = `Player ${currentPlayer} wins — BREAK`;
     msgEl.className = 'message-text win-break';
     document.getElementById('device').classList.add('win-break');
