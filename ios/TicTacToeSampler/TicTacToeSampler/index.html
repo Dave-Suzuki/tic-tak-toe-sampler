@@ -351,7 +351,7 @@
   }
   .edit-bottom-row {
     width:100%; display:flex; align-items:center; justify-content:center;
-    gap:8px; padding-top:6px;
+    gap:6px; padding-top:6px; flex-wrap:wrap;
   }
   .edit-actions { display:flex; gap:4px; flex-shrink:0; }
   .edit-btn {
@@ -372,26 +372,47 @@
   }
   .edit-saved-flash.show { opacity:1; }
 
-  /* Note carousel */
+  /* Note carousel — wheel picker style */
   .note-carousel-wrapper {
     overflow:hidden; height:0; transition:height 0.2s ease;
-    display:flex; justify-content:center; width:100%;
+    display:flex; align-items:center; justify-content:center; width:100%;
+    gap:8px; position:relative;
   }
-  .note-carousel-wrapper.active { height:60px; }
-  .note-carousel-wrapper.zoomed { height:80px; }
+  .note-carousel-wrapper.active { height:90px; }
+  .note-carousel-outer {
+    position:relative; overflow:hidden; height:100%;
+    flex:1; max-width:200px;
+    -webkit-mask-image:linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
+    mask-image:linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
+  }
   .note-carousel {
     display:flex; flex-direction:column; align-items:center; justify-content:center;
-    touch-action:none; user-select:none; cursor:grab; gap:2px; padding:4px 0;
+    touch-action:none; user-select:none; cursor:grab; gap:1px;
+    padding:8px 0; height:100%;
   }
   .note-carousel-item {
-    font-family:'Space Mono',monospace; font-size:8px; color:var(--grey);
-    transition:all 0.15s ease; opacity:0.3; line-height:1.2;
+    font-family:'Space Mono',monospace; font-size:9px; color:var(--grey);
+    opacity:0.2; line-height:1.4; padding:2px 12px; transition:color 0.1s ease;
+    flex-shrink:0;
   }
-  .note-carousel-item.near { font-size:10px; opacity:0.6; }
-  .note-carousel-item.center { font-size:14px; color:var(--accent); opacity:1; font-weight:bold; }
-  .note-carousel-wrapper.zoomed .note-carousel-item { font-size:10px; }
-  .note-carousel-wrapper.zoomed .note-carousel-item.near { font-size:13px; }
-  .note-carousel-wrapper.zoomed .note-carousel-item.center { font-size:18px; }
+  .note-carousel-item.far { opacity:0.25; font-size:9px; }
+  .note-carousel-item.near { font-size:11px; opacity:0.5; }
+  .note-carousel-item.center {
+    font-size:16px; color:var(--accent); opacity:1; font-weight:bold;
+  }
+  .note-carousel-highlight {
+    position:absolute; top:50%; left:10%; right:10%; height:22px;
+    transform:translateY(-50%); border-top:1px solid var(--border);
+    border-bottom:1px solid var(--border); pointer-events:none;
+  }
+  .carousel-arrow {
+    background:none; border:1px solid var(--border); border-radius:50%;
+    width:28px; height:28px; display:flex; align-items:center; justify-content:center;
+    font-size:12px; color:var(--grey); cursor:pointer; flex-shrink:0;
+    transition:all 0.15s ease; touch-action:manipulation;
+  }
+  .carousel-arrow:hover { color:var(--accent); border-color:var(--accent); }
+  .carousel-arrow:active { background:var(--accent); color:var(--bg); }
 
   /* Dot previews in grid cells */
   .dot-preview {
@@ -671,14 +692,12 @@
     .edit-strip-icon { font-size:10px; }
     .edit-note-label { font-size:4px; top:-9px; }
     .edit-btn { font-size:6px; padding:2px 5px; }
-    .note-carousel-wrapper.active { height:50px; }
-    .note-carousel-wrapper.zoomed { height:65px; }
-    .note-carousel-item { font-size:7px; }
-    .note-carousel-item.near { font-size:9px; }
-    .note-carousel-item.center { font-size:12px; }
-    .note-carousel-wrapper.zoomed .note-carousel-item { font-size:9px; }
-    .note-carousel-wrapper.zoomed .note-carousel-item.near { font-size:11px; }
-    .note-carousel-wrapper.zoomed .note-carousel-item.center { font-size:15px; }
+    .note-carousel-wrapper.active { height:85px; }
+    .note-carousel-item { font-size:8px; }
+    .note-carousel-item.near { font-size:10px; }
+    .note-carousel-item.center { font-size:14px; }
+    .carousel-arrow { width:24px; height:24px; font-size:10px; }
+    .note-carousel-highlight { height:18px; }
     .dot-preview { bottom:3px; left:4px; right:4px; }
     .dot-preview .dp { width:2px; height:2px; }
     .message-bar { padding:6px 10px; margin-bottom:6px; min-height:30px; }
@@ -794,7 +813,12 @@
     </div>
     <div class="edit-bottom-row" id="editBottomRow" style="display:none">
       <div class="note-carousel-wrapper" id="noteCarouselWrapper" style="display:none">
-        <div class="note-carousel" id="noteCarousel"></div>
+        <button class="carousel-arrow" id="carouselDown" onclick="carouselStep(-1)">&#9660;</button>
+        <div class="note-carousel-outer">
+          <div class="note-carousel-highlight"></div>
+          <div class="note-carousel" id="noteCarousel"></div>
+        </div>
+        <button class="carousel-arrow" id="carouselUp" onclick="carouselStep(1)">&#9650;</button>
       </div>
       <div class="edit-actions">
         <button class="edit-btn" onclick="cancelEdit()">Cancel</button>
@@ -1984,7 +2008,10 @@ function toggleEditStep(idx) {
 function showNoteCarousel(stepIdx) {
   const wrapper = document.getElementById('noteCarouselWrapper');
   wrapper.style.display = '';
-  requestAnimationFrame(() => wrapper.classList.add('active'));
+  requestAnimationFrame(() => {
+    wrapper.classList.add('active');
+    setTimeout(() => document.getElementById('editBottomRow').scrollIntoView({behavior:'smooth', block:'nearest'}), 220);
+  });
   const style = STYLES[currentStyleKey];
   const inst = style.instruments[editingPad];
   if (inst.type === 'chord') {
@@ -2005,7 +2032,7 @@ function showNoteCarousel(stepIdx) {
 
 function hideNoteCarousel() {
   const wrapper = document.getElementById('noteCarouselWrapper');
-  wrapper.classList.remove('active', 'zoomed');
+  wrapper.classList.remove('active');
   setTimeout(() => { wrapper.style.display = 'none'; }, 200);
 }
 
@@ -2018,12 +2045,13 @@ function renderCarousel() {
   const items = isChord
     ? inst.params.chords.map((_, i) => 'Chord ' + (i + 1))
     : getGenreScale().map(f => freqToNoteName(f));
-  for (let offset = -2; offset <= 2; offset++) {
+  for (let offset = -3; offset <= 3; offset++) {
     const idx = carouselNoteIndex + offset;
     const item = document.createElement('div');
     item.className = 'note-carousel-item';
     if (offset === 0) item.classList.add('center');
     else if (Math.abs(offset) === 1) item.classList.add('near');
+    else item.classList.add('far');
     if (idx >= 0 && idx < items.length) {
       item.textContent = items[idx];
     } else {
@@ -2032,6 +2060,7 @@ function renderCarousel() {
     }
     item.addEventListener('click', () => {
       if (idx >= 0 && idx < items.length && offset !== 0) {
+        pushPatternUndo();
         carouselNoteIndex = idx;
         applyCarouselNote();
         renderCarousel();
@@ -2040,6 +2069,21 @@ function renderCarousel() {
     });
     container.appendChild(item);
   }
+}
+
+function carouselStep(dir) {
+  if (editSelectedStep === null || editingPad === null) return;
+  const style = STYLES[currentStyleKey];
+  const inst = style.instruments[editingPad];
+  const isChord = inst && inst.type === 'chord';
+  const maxIdx = isChord ? (inst.params.chords.length - 1) : (getGenreScale().length - 1);
+  const newIdx = carouselNoteIndex + dir;
+  if (newIdx < 0 || newIdx > maxIdx) return;
+  pushPatternUndo();
+  carouselNoteIndex = newIdx;
+  applyCarouselNote();
+  renderCarousel();
+  renderEditStrip();
 }
 
 function applyCarouselNote() {
@@ -2057,35 +2101,70 @@ function applyCarouselNote() {
 }
 
 function setupCarouselTouch() {
-  const container = document.getElementById('noteCarousel');
+  const outer = document.querySelector('.note-carousel-outer');
+  let lastY = 0, lastTime = 0, velocity = 0, inertiaAnim = null;
+
+  function getMaxIdx() {
+    const style = STYLES[currentStyleKey];
+    const inst = style.instruments[editingPad];
+    if (!inst) return 0;
+    return inst.type === 'chord' ? (inst.params.chords.length - 1) : (getGenreScale().length - 1);
+  }
+
+  function stopInertia() { if (inertiaAnim) { cancelAnimationFrame(inertiaAnim); inertiaAnim = null; } }
+
   const onStart = (clientY) => {
+    stopInertia();
     carouselDragging = true;
     carouselDragStartY = clientY;
     carouselDragStartIndex = carouselNoteIndex;
+    lastY = clientY; lastTime = Date.now(); velocity = 0;
     pushPatternUndo();
-    document.getElementById('noteCarouselWrapper').classList.add('zoomed');
   };
+
   const onMove = (clientY) => {
     if (!carouselDragging) return;
+    const now = Date.now();
+    const dt = now - lastTime;
+    if (dt > 0) velocity = (lastY - clientY) / dt;
+    lastY = clientY; lastTime = now;
     const dy = carouselDragStartY - clientY;
-    const style = STYLES[currentStyleKey];
-    const inst = style.instruments[editingPad];
-    const isChord = inst && inst.type === 'chord';
-    const maxIdx = isChord ? (inst.params.chords.length - 1) : (getGenreScale().length - 1);
-    carouselNoteIndex = Math.max(0, Math.min(maxIdx, carouselDragStartIndex + Math.round(dy / 25)));
+    const maxIdx = getMaxIdx();
+    carouselNoteIndex = Math.max(0, Math.min(maxIdx, carouselDragStartIndex + Math.round(dy / 30)));
     applyCarouselNote();
     renderCarousel();
     renderEditStrip();
   };
+
   const onEnd = () => {
     if (!carouselDragging) return;
     carouselDragging = false;
-    document.getElementById('noteCarouselWrapper').classList.remove('zoomed');
+    // Inertial flick: apply remaining velocity
+    if (Math.abs(velocity) > 0.15) {
+      let v = velocity * 8;
+      const maxIdx = getMaxIdx();
+      const tick = () => {
+        v *= 0.85; // friction
+        if (Math.abs(v) < 0.5) return;
+        const step = Math.sign(v) * Math.ceil(Math.abs(v) / 3);
+        const newIdx = Math.max(0, Math.min(maxIdx, carouselNoteIndex + step));
+        if (newIdx !== carouselNoteIndex) {
+          carouselNoteIndex = newIdx;
+          applyCarouselNote();
+          renderCarousel();
+          renderEditStrip();
+        }
+        inertiaAnim = requestAnimationFrame(tick);
+      };
+      inertiaAnim = requestAnimationFrame(tick);
+    }
   };
-  container.addEventListener('touchstart', e => { e.preventDefault(); onStart(e.touches[0].clientY); }, {passive:false});
-  container.addEventListener('touchmove', e => { e.preventDefault(); onMove(e.touches[0].clientY); }, {passive:false});
-  container.addEventListener('touchend', onEnd);
-  container.addEventListener('mousedown', e => { e.preventDefault(); onStart(e.clientY); });
+
+  // Use the outer wrapper as touch zone for larger target area
+  outer.addEventListener('touchstart', e => { e.preventDefault(); onStart(e.touches[0].clientY); }, {passive:false});
+  outer.addEventListener('touchmove', e => { e.preventDefault(); onMove(e.touches[0].clientY); }, {passive:false});
+  outer.addEventListener('touchend', onEnd);
+  outer.addEventListener('mousedown', e => { e.preventDefault(); onStart(e.clientY); });
   document.addEventListener('mousemove', e => { if (carouselDragging) onMove(e.clientY); });
   document.addEventListener('mouseup', () => { if (carouselDragging) onEnd(); });
 }
