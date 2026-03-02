@@ -1681,19 +1681,33 @@ function scheduleStep(step, time) {
   if (winPhase === 'break') {
     // Play only the 3 winning cells — matches the visual win line
     var breakCells = winCells || BREAK_SOLO;
-    if (step === 0) console.log('[break] cells=' + JSON.stringify(breakCells) + ' ctx=' + (ctx ? ctx.state : 'null') + ' left=' + winStepsLeft);
+    if (step === 0) console.log('[break] cells=' + JSON.stringify(breakCells) + ' ctx=' + (ctx ? ctx.state : 'null') + ' left=' + winStepsLeft + ' time=' + time.toFixed(3) + ' now=' + ctx.currentTime.toFixed(3));
+    // Diagnostic: test beep on first step of break to verify audio pipeline
+    if (winStepsLeft === 32 && step === 0) {
+      try {
+        var beep = ctx.createOscillator(), beepG = ctx.createGain();
+        beep.frequency.value = 880;
+        beepG.gain.setValueAtTime(0.3, time);
+        beepG.gain.exponentialRampToValueAtTime(0.001, time + 0.15);
+        beep.connect(beepG); beepG.connect(masterGain);
+        beep.start(time); beep.stop(time + 0.16);
+        console.log('[break] test beep scheduled at ' + time.toFixed(3));
+      } catch(e) { console.log('[break] beep error: ' + e); }
+    }
     for (const i of breakCells) {
       const inst = style.instruments[i];
       const fn = synth[inst.type];
       if (fn) {
         if (step === 0) console.log('[break] playing cell ' + i + ' type=' + inst.type + ' pat[0]=' + inst.pattern[0]);
-        if (feelOn) {
-          const pat = getVariedPattern(inst.pattern, inst.type, barCount);
-          const hp = humanizeParams(inst.params, inst.type);
-          fn(time + getMicroTiming(inst.type), step, pat, hp);
-        } else {
-          fn(time, step, inst.pattern, inst.params);
-        }
+        try {
+          if (feelOn) {
+            const pat = getVariedPattern(inst.pattern, inst.type, barCount);
+            const hp = humanizeParams(inst.params, inst.type);
+            fn(time + getMicroTiming(inst.type), step, pat, hp);
+          } else {
+            fn(time, step, inst.pattern, inst.params);
+          }
+        } catch(e) { console.log('[break] synth error cell ' + i + ': ' + e); }
       }
     }
     winStepsLeft--;
@@ -2454,6 +2468,10 @@ function makeMove(i) {
 
     winPhase = 'break';
     winStepsLeft = 32;
+    // Reset scheduler timing so break steps are scheduled in the future,
+    // not in the past (iOS WKWebView may drop past-scheduled audio nodes)
+    currentStep = 0;
+    if (ctx) nextStepTime = ctx.currentTime + 0.05;
     msgEl.textContent = `Player ${currentPlayer} wins — BREAK`;
     msgEl.className = 'message-text win-break';
     document.getElementById('device').classList.add('win-break');
