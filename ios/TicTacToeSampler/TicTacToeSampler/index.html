@@ -372,6 +372,16 @@
   }
   .edit-saved-flash.show { opacity:1; }
 
+  /* Tap-to-resume audio banner (last-resort fallback) */
+  .tap-resume-banner {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    background:rgba(0,0,0,0.85); color:#fff; padding:16px 32px;
+    border-radius:12px; font-family:'Space Mono',monospace; font-size:14px;
+    letter-spacing:1px; text-transform:uppercase; z-index:999; cursor:pointer;
+    animation: tapResumePulse 1.5s ease-in-out infinite;
+  }
+  @keyframes tapResumePulse { 0%,100%{opacity:0.8} 50%{opacity:1} }
+
   /* Note carousel — wheel picker style */
   .note-carousel-wrapper {
     overflow:hidden; height:0; transition:height 0.2s ease;
@@ -746,6 +756,8 @@
 <div class="bg-grid"></div>
 
 <div class="device" id="device">
+  <div id="tapToResumeBanner" class="tap-resume-banner" style="display:none"
+       onclick="manualAudioResume()">Tap to resume audio</div>
   <div class="header">
     <div>
       <div class="model-name" id="modelName">Tic Tac Tone</div>
@@ -1028,6 +1040,17 @@ function initAudio() {
   fxTremoloLFO.connect(fxTremoloGain);
   fxTremoloGain.connect(masterGain.gain);
   fxTremoloLFO.start();
+}
+
+function teardownAudio() {
+  if (schedulerTimer) { clearInterval(schedulerTimer); schedulerTimer = null; }
+  if (ctx) { try { ctx.close(); } catch(e) {} }
+  ctx = null;
+  masterGain = null; masterComp = null; noiseBuffer = null;
+  fxFilter = null; fxDistortion = null;
+  fxReverb = null; fxReverbSend = null;
+  fxDelay = null; fxDelayFeedback = null; fxDelaySend = null;
+  fxTremoloLFO = null; fxTremoloGain = null;
 }
 
 function noise() {
@@ -1652,6 +1675,7 @@ const BREAK_SOLO = [3, 7];
 function getStepDuration() { return 60.0 / bpm / 4; }
 
 function scheduleStep(step, time) {
+  if (!ctx || !masterGain) return;
   const style = STYLES[currentStyleKey];
 
   if (winPhase === 'break') {
@@ -1707,6 +1731,7 @@ function scheduleStep(step, time) {
 }
 
 function scheduler() {
+  if (!ctx) return;
   while (nextStepTime < ctx.currentTime + LOOK_AHEAD) {
     let swingOffset = 0;
     if (currentStep % 2 === 1 && swing > 0) {
@@ -1722,7 +1747,9 @@ function scheduler() {
 function startSequencer() {
   if (isPlaying) return;
   initAudio();
+  if (!ctx) return;
   if (ctx.state === 'suspended') ctx.resume();
+  hideTapToResumeBanner();
   isPlaying = true;
   currentStep = 0;
   barCount = 0;
@@ -1731,57 +1758,109 @@ function startSequencer() {
   document.getElementById('statusText').textContent = 'Playing';
 }
 
+// --- Tap-to-resume banner (last-resort fallback for audio recovery) ---
+function showTapToResumeBanner() {
+  document.getElementById('tapToResumeBanner').style.display = '';
+}
+function hideTapToResumeBanner() {
+  document.getElementById('tapToResumeBanner').style.display = 'none';
+}
+function manualAudioResume() {
+  hideTapToResumeBanner();
+  _resumeInFlight = false; // reset debounce so retry can proceed
+  resumeAudioPlayback();
+}
+
 // On iOS WKWebView, ctx.resume() can resolve successfully while the
 // underlying audio hardware path stays disconnected.  The only reliable
 // recovery is to tear down the old AudioContext and build a fresh one.
+// This version retries with backoff and validates via currentTime probe.
 let _resumeInFlight = false;
 function resumeAudioPlayback() {
-  if (!isPlaying) return;
-  if (_resumeInFlight) return;          // debounce double-calls from Swift
+  // Nothing to recover if audio was never initialized and sequencer isn't playing
+  if (!ctx && !isPlaying) return;
+  if (_resumeInFlight) return;
   _resumeInFlight = true;
-  setTimeout(() => { _resumeInFlight = false; }, 1500);
+  setTimeout(() => { _resumeInFlight = false; }, 500);
 
-  // Stop the old scheduler immediately
-  if (schedulerTimer) { clearInterval(schedulerTimer); schedulerTimer = null; }
+  const wasPlaying = isPlaying;
+  if (isPlaying) { isPlaying = false; }
+  teardownAudio();
 
-  // Tear down the old (possibly broken) AudioContext
-  if (ctx) {
-    try { ctx.close(); } catch(e) {}
-  }
-  ctx = null;
-  noiseBuffer = null;
+  let attempt = 0;
+  const delays = [100, 500, 1500];
 
-  // Small delay lets iOS audio hardware fully reset before we re-init
-  setTimeout(function() {
-    // Build a brand-new AudioContext + master chain
+  function tryResume() {
+    attempt++;
+    console.log('[audio-recovery] attempt ' + attempt);
     initAudio();
-
-    if (ctx) {
-      ctx.resume().then(function() {
-        console.log('AudioContext recreated & resumed: ' + ctx.state);
-        nextStepTime = ctx.currentTime + 0.05;
-        if (schedulerTimer) clearInterval(schedulerTimer);
-        schedulerTimer = setInterval(scheduler, SCHEDULE_INTERVAL);
-      }).catch(function(e) {
-        console.log('AudioContext resume failed after recreate: ' + e);
-      });
+    if (!ctx) {
+      console.log('[audio-recovery] initAudio produced no ctx');
+      return;
     }
-  }, 100);
+
+    ctx.resume().then(function() {
+      // Validate: is currentTime actually advancing?
+      var t0 = ctx.currentTime;
+      setTimeout(function() {
+        if (!ctx) return;
+        var t1 = ctx.currentTime;
+        console.log('[audio-recovery] t0=' + t0.toFixed(3) +
+          ' t1=' + t1.toFixed(3) + ' state=' + ctx.state);
+        if (t1 > t0 || ctx.state === 'running') {
+          // Success — restart sequencer if it was playing
+          hideTapToResumeBanner();
+          if (wasPlaying) {
+            isPlaying = true;
+            nextStepTime = ctx.currentTime + 0.05;
+            schedulerTimer = setInterval(scheduler, SCHEDULE_INTERVAL);
+            document.getElementById('statusText').textContent = 'Playing';
+          }
+          console.log('[audio-recovery] success on attempt ' + attempt);
+        } else if (attempt < delays.length) {
+          console.log('[audio-recovery] frozen currentTime, retrying...');
+          teardownAudio();
+          setTimeout(tryResume, delays[attempt]);
+        } else {
+          console.log('[audio-recovery] all attempts failed — showing banner');
+          showTapToResumeBanner();
+        }
+      }, 200);
+    }).catch(function(e) {
+      console.log('[audio-recovery] resume rejected: ' + e);
+      if (attempt < delays.length) {
+        teardownAudio();
+        setTimeout(tryResume, delays[attempt]);
+      } else {
+        showTapToResumeBanner();
+      }
+    });
+  }
+
+  setTimeout(tryResume, delays[0]);
 }
 
+// iOS recovery event listeners — no restrictive guards; debounce inside
+// resumeAudioPlayback() prevents spam.
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') resumeAudioPlayback();
 });
+window.addEventListener('pageshow', () => resumeAudioPlayback());
+window.addEventListener('focus', () => resumeAudioPlayback());
 
-// iOS WKWebView may not always fire visibilitychange; pageshow is a backup
-window.addEventListener('pageshow', (e) => {
-  if (e.persisted) resumeAudioPlayback();
-});
-
-// iOS sometimes doesn't fire visibilitychange on lock/unlock — use focus as extra trigger
-window.addEventListener('focus', () => {
-  if (isPlaying && ctx && ctx.state === 'interrupted') resumeAudioPlayback();
-});
+// Periodic health check: detect frozen currentTime while tab appears active
+let _lastCtxTime = 0, _lastCheckAt = 0;
+setInterval(() => {
+  if (!ctx || !isPlaying) { _lastCtxTime = 0; return; }
+  const now = performance.now();
+  if (now - _lastCheckAt < 4500) return;
+  _lastCheckAt = now;
+  if (_lastCtxTime > 0 && ctx.currentTime === _lastCtxTime && ctx.state !== 'suspended') {
+    console.log('[audio-health] frozen currentTime (' + _lastCtxTime.toFixed(3) + '), triggering recovery');
+    resumeAudioPlayback();
+  }
+  _lastCtxTime = ctx.currentTime;
+}, 5000);
 
 function stopSequencer() {
   if (!isPlaying) return;
@@ -2187,7 +2266,7 @@ function setupCarouselTouch() {
 
 // --- Metronome ---
 function playMetronomeClick(time, step) {
-  if (!ctx || gameMode !== 'edit') return;
+  if (!ctx || !masterGain || gameMode !== 'edit') return;
   if (step % 4 !== 0) return;
   const o = ctx.createOscillator(), g = ctx.createGain();
   o.type = 'sine';
@@ -2395,7 +2474,7 @@ function makeMove(i) {
 }
 
 function playBlip(player) {
-  if (!ctx) return;
+  if (!ctx || !masterGain) return;
   const o = ctx.createOscillator(), g = ctx.createGain();
   o.type = 'sine'; o.frequency.value = player === 'X' ? 880 : 660;
   g.gain.setValueAtTime(0.06, ctx.currentTime);
