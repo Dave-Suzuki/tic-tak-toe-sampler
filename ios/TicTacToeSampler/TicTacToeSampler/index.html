@@ -312,11 +312,116 @@
   .step-dot.active { background:var(--accent); box-shadow:0 0 6px var(--accent-20); }
   .step-dot.downbeat { height:5px; }
 
+  /* Step sequencer edit strip */
+  .edit-strip {
+    display:flex; align-items:center; gap:6px; width:100%;
+  }
+  .edit-strip-label {
+    font-family:'Space Mono',monospace; font-size:8px; letter-spacing:1px;
+    text-transform:uppercase; color:var(--accent); white-space:nowrap;
+    display:flex; align-items:center; gap:4px; min-width:50px;
+  }
+  .edit-strip-icon { font-size:12px; }
+  .edit-step-groups {
+    display:flex; gap:6px; flex:1; justify-content:center;
+  }
+  .edit-step-group { display:flex; gap:2px; }
+  .edit-step {
+    width:16px; height:16px; border-radius:3px; border:1px solid var(--border);
+    background:var(--surface); cursor:pointer; transition:all 0.1s ease;
+    position:relative;
+  }
+  .edit-step:hover { border-color:var(--grey-light); }
+  .edit-step.on {
+    background:var(--accent); border-color:var(--accent);
+  }
+  .edit-step.playing {
+    box-shadow:0 0 6px var(--accent-20);
+  }
+  .edit-step.on.playing {
+    background:var(--text); border-color:var(--text);
+  }
+  .edit-step.selected {
+    outline:2px solid var(--accent); outline-offset:1px;
+  }
+  .edit-note-label {
+    position:absolute; top:-12px; left:50%; transform:translateX(-50%);
+    font-family:'Space Mono',monospace; font-size:5px; color:var(--accent);
+    letter-spacing:0.5px; white-space:nowrap; pointer-events:none;
+  }
+  .edit-bottom-row {
+    width:100%; display:flex; align-items:center; justify-content:center;
+    gap:8px; padding-top:6px;
+  }
+  .edit-actions { display:flex; gap:4px; flex-shrink:0; }
+  .edit-btn {
+    background:none; border:1px solid var(--border); border-radius:4px;
+    font-family:'Space Mono',monospace; font-size:7px; letter-spacing:0.5px;
+    cursor:pointer; padding:3px 6px; line-height:1; transition:all 0.15s ease;
+    text-transform:uppercase; color:var(--grey);
+  }
+  .edit-btn:hover { color:var(--text); border-color:var(--grey); }
+  .edit-btn.ok { color:var(--accent); border-color:var(--accent); }
+  .edit-btn.ok:hover { background:var(--accent); color:var(--bg); }
+  .edit-saved-flash {
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+    font-family:'Space Mono',monospace; font-size:11px; letter-spacing:2px;
+    text-transform:uppercase; color:var(--accent); background:var(--surface);
+    border:1px solid var(--accent); border-radius:6px; padding:6px 14px;
+    opacity:0; transition:opacity 0.15s ease; pointer-events:none; z-index:100;
+  }
+  .edit-saved-flash.show { opacity:1; }
+
+  /* Note carousel */
+  .note-carousel-wrapper {
+    overflow:hidden; height:0; transition:height 0.2s ease;
+    display:flex; justify-content:center; width:100%;
+  }
+  .note-carousel-wrapper.active { height:60px; }
+  .note-carousel-wrapper.zoomed { height:80px; }
+  .note-carousel {
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    touch-action:none; user-select:none; cursor:grab; gap:2px; padding:4px 0;
+  }
+  .note-carousel-item {
+    font-family:'Space Mono',monospace; font-size:8px; color:var(--grey);
+    transition:all 0.15s ease; opacity:0.3; line-height:1.2;
+  }
+  .note-carousel-item.near { font-size:10px; opacity:0.6; }
+  .note-carousel-item.center { font-size:14px; color:var(--accent); opacity:1; font-weight:bold; }
+  .note-carousel-wrapper.zoomed .note-carousel-item { font-size:10px; }
+  .note-carousel-wrapper.zoomed .note-carousel-item.near { font-size:13px; }
+  .note-carousel-wrapper.zoomed .note-carousel-item.center { font-size:18px; }
+
+  /* Dot previews in grid cells */
+  .dot-preview {
+    position:absolute; bottom:4px; left:6px; right:6px;
+    display:flex; gap:1px; justify-content:center; opacity:0;
+    transition:opacity 0.3s ease; pointer-events:none;
+  }
+  .dot-preview.visible { opacity:1; }
+  .dot-preview .dp {
+    width:3px; height:3px; border-radius:50%;
+    background:var(--border); flex-shrink:0;
+    transition:background 0.1s ease;
+  }
+  .dot-preview .dp.on { background:var(--grey-light); }
+  .dot-preview .dp.playing { background:var(--accent); }
+  .dot-preview .dp-gap { width:2px; flex-shrink:0; }
+
+  /* Cell editing highlight */
+  .cell.editing {
+    border-left-color:var(--accent) !important;
+    box-shadow:inset 0 0 0 1px var(--accent-20);
+  }
+  .cell.editing .inst-name { color:var(--accent); }
+  .cell.editing .inst-icon { opacity:1; color:var(--accent); }
+
   /* Message */
   .message-bar {
     background:var(--surface); border:1px solid var(--border); border-radius:8px;
     padding:10px 14px; margin-bottom:12px; display:flex; align-items:center;
-    justify-content:space-between; min-height:40px;
+    justify-content:space-between; min-height:40px; flex-wrap:wrap;
     transition:background 0.5s ease, border-color 0.5s ease;
   }
   .message-text { font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey-light); }
@@ -558,6 +663,24 @@
     .step-row { margin-bottom:6px; gap:2px; }
     .step-dot { height:3px; }
     .step-dot.downbeat { height:4px; }
+    .edit-strip { gap:4px; }
+    .edit-step { width:12px; height:12px; border-radius:2px; }
+    .edit-step-groups { gap:3px; }
+    .edit-step-group { gap:1px; }
+    .edit-strip-label { font-size:6px; min-width:0; letter-spacing:0.5px; }
+    .edit-strip-icon { font-size:10px; }
+    .edit-note-label { font-size:4px; top:-9px; }
+    .edit-btn { font-size:6px; padding:2px 5px; }
+    .note-carousel-wrapper.active { height:50px; }
+    .note-carousel-wrapper.zoomed { height:65px; }
+    .note-carousel-item { font-size:7px; }
+    .note-carousel-item.near { font-size:9px; }
+    .note-carousel-item.center { font-size:12px; }
+    .note-carousel-wrapper.zoomed .note-carousel-item { font-size:9px; }
+    .note-carousel-wrapper.zoomed .note-carousel-item.near { font-size:11px; }
+    .note-carousel-wrapper.zoomed .note-carousel-item.center { font-size:15px; }
+    .dot-preview { bottom:3px; left:4px; right:4px; }
+    .dot-preview .dp { width:2px; height:2px; }
     .message-bar { padding:6px 10px; margin-bottom:6px; min-height:30px; }
     .message-text { font-size:8px; }
     .layers-info { font-size:8px; }
@@ -662,9 +785,22 @@
 
   <div class="step-row" id="stepRow"></div>
 
-  <div class="message-bar">
+  <div class="message-bar" id="messageBar">
     <span class="message-text" id="message">Player X — Select a pad</span>
-    <span class="layers-info"><span class="layers-count" id="layerCount">0</span>/9 layers</span>
+    <span class="layers-info" id="layersInfo"><span class="layers-count" id="layerCount">0</span>/9 layers</span>
+    <div class="edit-strip" id="editStrip" style="display:none">
+      <span class="edit-strip-label" id="editLabel"></span>
+      <div class="edit-step-groups" id="editSteps"></div>
+    </div>
+    <div class="edit-bottom-row" id="editBottomRow" style="display:none">
+      <div class="note-carousel-wrapper" id="noteCarouselWrapper" style="display:none">
+        <div class="note-carousel" id="noteCarousel"></div>
+      </div>
+      <div class="edit-actions">
+        <button class="edit-btn" onclick="cancelEdit()">Cancel</button>
+        <button class="edit-btn ok" onclick="deselectPad()">OK</button>
+      </div>
+    </div>
   </div>
 
   <div class="controls">
@@ -730,6 +866,7 @@
   <div class="footer"><span id="footer">TTT × HH-73 — 2026</span><button class="info-btn" id="infoBtn" aria-label="Info">i</button></div>
 </div>
 
+<div class="edit-saved-flash" id="editSavedFlash">Saved</div>
 <div class="info-overlay" id="infoOverlay">
   <div class="info-panel">
     <h3>Tic Tac Tone</h3>
@@ -1431,6 +1568,30 @@ const STYLES = {
   }
 };
 
+// Deep-copy original patterns so genre switch can restore after user edits
+const DEFAULT_PATTERNS = {};
+for (const [key, style] of Object.entries(STYLES)) {
+  DEFAULT_PATTERNS[key] = style.instruments.map(inst => inst.pattern.slice());
+}
+
+// Note helpers
+const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+function freqToNoteName(freq) {
+  const midi = Math.round(12 * Math.log2(freq / 440) + 69);
+  return NOTE_NAMES[((midi % 12) + 12) % 12] + (Math.floor(midi / 12) - 1);
+}
+function getGenreScale(styleKey) {
+  const freqs = new Set();
+  const style = STYLES[styleKey || currentStyleKey];
+  const defs = DEFAULT_PATTERNS[styleKey || currentStyleKey];
+  style.instruments.forEach((inst, i) => {
+    if (['bass','lead','arp'].includes(inst.type)) {
+      defs[i].forEach(v => { if (v > 0) freqs.add(v); });
+    }
+  });
+  return [...freqs].sort((a, b) => a - b);
+}
+
 // ============================================================
 // SEQUENCER
 // ============================================================
@@ -1482,18 +1643,23 @@ function scheduleStep(step, time) {
     // Normal playback
     for (let i = 0; i < 9; i++) {
       if (!activeCells[i]) continue;
+      // Solo guard: in edit mode, only play the editing pad
+      if (gameMode === 'edit' && editingPad !== null && i !== editingPad) continue;
       const inst = style.instruments[i];
+      const pat = (gameMode === 'edit' && i === editingPad && editStepState.length) ? editStepState : inst.pattern;
       const fn = synth[inst.type];
       if (fn) {
         if (feelOn) {
-          const pat = getVariedPattern(inst.pattern, inst.type, barCount);
+          const varied = getVariedPattern(pat, inst.type, barCount);
           const hp = humanizeParams(inst.params, inst.type);
-          fn(time + getMicroTiming(inst.type), step, pat, hp);
+          fn(time + getMicroTiming(inst.type), step, varied, hp);
         } else {
-          fn(time, step, inst.pattern, inst.params);
+          fn(time, step, pat, inst.params);
         }
       }
     }
+    // Metronome click in edit mode
+    playMetronomeClick(time, step);
   }
 
   const delay = Math.max(0, (time - ctx.currentTime) * 1000);
@@ -1588,6 +1754,8 @@ function stopSequencer() {
   document.getElementById('statusText').textContent = 'Stopped';
   document.getElementById('device').classList.remove('win-break');
   document.querySelectorAll('.step-dot').forEach(d => d.classList.remove('active'));
+  document.querySelectorAll('.edit-step').forEach(s => s.classList.remove('playing'));
+  document.querySelectorAll('.dp').forEach(d => d.classList.remove('playing'));
 }
 
 function updateStepVisual(step) {
@@ -1598,6 +1766,27 @@ function updateStepVisual(step) {
     const tb = document.getElementById('tapBtn');
     tb.classList.add('beat-pulse');
     setTimeout(() => tb.classList.remove('beat-pulse'), 100);
+  }
+  // Update edit strip playing indicator
+  if (editingPad !== null) {
+    document.querySelectorAll('.edit-step').forEach((s, i) => s.classList.toggle('playing', i === step));
+  }
+  // Update dot preview playing indicators
+  if (gameMode === 'sampler') {
+    for (let i = 0; i < 9; i++) {
+      const dp = document.getElementById(`dp${i}`);
+      if (!dp) continue;
+      const dots2 = dp.querySelectorAll('.dp');
+      dots2.forEach(d => d.classList.remove('playing'));
+      // Find the step-th actual dot (skipping gap spans)
+      let count = 0;
+      for (const child of dp.children) {
+        if (child.classList.contains('dp')) {
+          if (count === step) { child.classList.add('playing'); break; }
+          count++;
+        }
+      }
+    }
   }
   const style = STYLES[currentStyleKey];
 
@@ -1640,6 +1829,324 @@ let gameMode = localStorage.getItem('mp401-gameMode') || '2p'; // '2p' | 'ai' | 
 const WINS = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
 
 // ============================================================
+// STEP EDIT MODE
+// ============================================================
+let editingPad = null;
+let editStepState = [];
+let editSelectedStep = null;
+let patternUndoStack = [];
+let carouselNoteIndex = 0;
+let carouselDragging = false;
+let carouselDragStartY = 0;
+let carouselDragStartIndex = 0;
+const MELODIC_TYPES = ['bass','lead','arp','chord'];
+
+function isMelodicType(type) {
+  return MELODIC_TYPES.includes(type);
+}
+
+function pushPatternUndo() {
+  if (editingPad === null) return;
+  patternUndoStack.push({ padIndex:editingPad, pattern:editStepState.slice() });
+  if (patternUndoStack.length > 50) patternUndoStack.shift();
+}
+
+function undoPatternEdit() {
+  if (patternUndoStack.length === 0) return;
+  const entry = patternUndoStack.pop();
+  const style = STYLES[currentStyleKey];
+  const inst = style.instruments[entry.padIndex];
+  for (let i = 0; i < 16; i++) inst.pattern[i] = entry.pattern[i];
+  if (editingPad === entry.padIndex) editStepState = inst.pattern;
+  hideNoteCarousel();
+  editSelectedStep = null;
+  renderEditStrip();
+  renderDotPreview(entry.padIndex);
+}
+
+function selectPadForEdit(i) {
+  if (editingPad !== null) deselectPad();
+  editingPad = i;
+  editSelectedStep = null;
+  patternUndoStack = [];
+  const style = STYLES[currentStyleKey];
+  const inst = style.instruments[i];
+  editStepState = inst.pattern; // direct reference — edits are live
+  const cell = gridEl.children[i];
+  cell.classList.add('editing');
+  document.getElementById('message').style.display = 'none';
+  document.getElementById('layersInfo').style.display = 'none';
+  document.getElementById('editStrip').style.display = 'flex';
+  document.getElementById('editBottomRow').style.display = 'flex';
+  document.getElementById('editLabel').innerHTML =
+    `<span class="edit-strip-icon">${inst.icon}</span> ${inst.name}`;
+  renderEditStrip();
+}
+
+function deselectPad() {
+  if (editingPad === null) return;
+  hideNoteCarousel();
+  const cell = gridEl.children[editingPad];
+  cell.classList.remove('editing');
+  editingPad = null;
+  editSelectedStep = null;
+  patternUndoStack = [];
+  document.getElementById('editStrip').style.display = 'none';
+  document.getElementById('editBottomRow').style.display = 'none';
+  document.getElementById('message').style.display = '';
+  document.getElementById('layersInfo').style.display = '';
+}
+
+function cancelEdit() {
+  if (editingPad === null) return;
+  // Revert all changes by unwinding the undo stack
+  while (patternUndoStack.length > 0) {
+    const entry = patternUndoStack.pop();
+    const inst = STYLES[currentStyleKey].instruments[entry.padIndex];
+    for (let i = 0; i < 16; i++) inst.pattern[i] = entry.pattern[i];
+    if (editingPad === entry.padIndex) editStepState = inst.pattern;
+  }
+  renderDotPreview(editingPad);
+  deselectPad();
+}
+
+function flashSaved() {
+  const el = document.getElementById('editSavedFlash');
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 600);
+}
+
+function renderEditStrip() {
+  const container = document.getElementById('editSteps');
+  container.innerHTML = '';
+  if (editingPad === null) return;
+  const style = STYLES[currentStyleKey];
+  const inst = style.instruments[editingPad];
+  const melodic = isMelodicType(inst.type);
+  for (let g = 0; g < 4; g++) {
+    const group = document.createElement('div');
+    group.className = 'edit-step-group';
+    for (let s = 0; s < 4; s++) {
+      const idx = g * 4 + s;
+      const btn = document.createElement('div');
+      btn.className = 'edit-step';
+      if (editStepState[idx]) btn.classList.add('on');
+      if (idx === editSelectedStep) btn.classList.add('selected');
+      if (melodic && editStepState[idx]) {
+        const lbl = document.createElement('span');
+        lbl.className = 'edit-note-label';
+        lbl.textContent = inst.type === 'chord'
+          ? 'Ch' + editStepState[idx]
+          : freqToNoteName(editStepState[idx]);
+        btn.appendChild(lbl);
+      }
+      btn.addEventListener('click', () => toggleEditStep(idx));
+      group.appendChild(btn);
+    }
+    container.appendChild(group);
+  }
+}
+
+function toggleEditStep(idx) {
+  const style = STYLES[currentStyleKey];
+  const inst = style.instruments[editingPad];
+  if (editStepState[idx]) {
+    if (isMelodicType(inst.type) && editSelectedStep !== idx) {
+      editSelectedStep = idx;
+      showNoteCarousel(idx);
+      renderEditStrip();
+      return;
+    }
+    pushPatternUndo();
+    editStepState[idx] = 0;
+    editSelectedStep = null;
+    hideNoteCarousel();
+  } else {
+    pushPatternUndo();
+    if (isMelodicType(inst.type) && inst.type !== 'chord') {
+      const scale = getGenreScale();
+      editStepState[idx] = scale[Math.floor(scale.length / 2)];
+      editSelectedStep = idx;
+      showNoteCarousel(idx);
+    } else if (inst.type === 'chord') {
+      editStepState[idx] = 1;
+      editSelectedStep = idx;
+      showNoteCarousel(idx);
+    } else {
+      editStepState[idx] = 1;
+    }
+  }
+  renderEditStrip();
+  renderDotPreview(editingPad);
+}
+
+// --- Note Carousel ---
+function showNoteCarousel(stepIdx) {
+  const wrapper = document.getElementById('noteCarouselWrapper');
+  wrapper.style.display = '';
+  requestAnimationFrame(() => wrapper.classList.add('active'));
+  const style = STYLES[currentStyleKey];
+  const inst = style.instruments[editingPad];
+  if (inst.type === 'chord') {
+    carouselNoteIndex = (editStepState[stepIdx] || 1) - 1;
+    renderCarousel();
+    return;
+  }
+  const scale = getGenreScale();
+  const currentFreq = editStepState[stepIdx];
+  carouselNoteIndex = 0;
+  let minDist = Infinity;
+  scale.forEach((f, i) => {
+    const dist = Math.abs(Math.log2(f) - Math.log2(currentFreq || scale[Math.floor(scale.length/2)]));
+    if (dist < minDist) { minDist = dist; carouselNoteIndex = i; }
+  });
+  renderCarousel();
+}
+
+function hideNoteCarousel() {
+  const wrapper = document.getElementById('noteCarouselWrapper');
+  wrapper.classList.remove('active', 'zoomed');
+  setTimeout(() => { wrapper.style.display = 'none'; }, 200);
+}
+
+function renderCarousel() {
+  const container = document.getElementById('noteCarousel');
+  container.innerHTML = '';
+  const style = STYLES[currentStyleKey];
+  const inst = style.instruments[editingPad];
+  const isChord = inst.type === 'chord';
+  const items = isChord
+    ? inst.params.chords.map((_, i) => 'Chord ' + (i + 1))
+    : getGenreScale().map(f => freqToNoteName(f));
+  for (let offset = -2; offset <= 2; offset++) {
+    const idx = carouselNoteIndex + offset;
+    const item = document.createElement('div');
+    item.className = 'note-carousel-item';
+    if (offset === 0) item.classList.add('center');
+    else if (Math.abs(offset) === 1) item.classList.add('near');
+    if (idx >= 0 && idx < items.length) {
+      item.textContent = items[idx];
+    } else {
+      item.textContent = '';
+      item.style.visibility = 'hidden';
+    }
+    item.addEventListener('click', () => {
+      if (idx >= 0 && idx < items.length && offset !== 0) {
+        carouselNoteIndex = idx;
+        applyCarouselNote();
+        renderCarousel();
+        renderEditStrip();
+      }
+    });
+    container.appendChild(item);
+  }
+}
+
+function applyCarouselNote() {
+  if (editSelectedStep === null || editingPad === null) return;
+  const style = STYLES[currentStyleKey];
+  const inst = style.instruments[editingPad];
+  if (inst.type === 'chord') {
+    editStepState[editSelectedStep] = carouselNoteIndex + 1;
+  } else {
+    const scale = getGenreScale();
+    if (carouselNoteIndex >= 0 && carouselNoteIndex < scale.length) {
+      editStepState[editSelectedStep] = scale[carouselNoteIndex];
+    }
+  }
+}
+
+function setupCarouselTouch() {
+  const container = document.getElementById('noteCarousel');
+  const onStart = (clientY) => {
+    carouselDragging = true;
+    carouselDragStartY = clientY;
+    carouselDragStartIndex = carouselNoteIndex;
+    pushPatternUndo();
+    document.getElementById('noteCarouselWrapper').classList.add('zoomed');
+  };
+  const onMove = (clientY) => {
+    if (!carouselDragging) return;
+    const dy = carouselDragStartY - clientY;
+    const style = STYLES[currentStyleKey];
+    const inst = style.instruments[editingPad];
+    const isChord = inst && inst.type === 'chord';
+    const maxIdx = isChord ? (inst.params.chords.length - 1) : (getGenreScale().length - 1);
+    carouselNoteIndex = Math.max(0, Math.min(maxIdx, carouselDragStartIndex + Math.round(dy / 25)));
+    applyCarouselNote();
+    renderCarousel();
+    renderEditStrip();
+  };
+  const onEnd = () => {
+    if (!carouselDragging) return;
+    carouselDragging = false;
+    document.getElementById('noteCarouselWrapper').classList.remove('zoomed');
+  };
+  container.addEventListener('touchstart', e => { e.preventDefault(); onStart(e.touches[0].clientY); }, {passive:false});
+  container.addEventListener('touchmove', e => { e.preventDefault(); onMove(e.touches[0].clientY); }, {passive:false});
+  container.addEventListener('touchend', onEnd);
+  container.addEventListener('mousedown', e => { e.preventDefault(); onStart(e.clientY); });
+  document.addEventListener('mousemove', e => { if (carouselDragging) onMove(e.clientY); });
+  document.addEventListener('mouseup', () => { if (carouselDragging) onEnd(); });
+}
+
+// --- Metronome ---
+function playMetronomeClick(time, step) {
+  if (!ctx || gameMode !== 'edit') return;
+  if (step % 4 !== 0) return;
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.type = 'sine';
+  o.frequency.value = step === 0 ? 1400 : 1200;
+  const vol = step === 0 ? 0.05 : 0.035;
+  g.gain.setValueAtTime(vol, time);
+  g.gain.exponentialRampToValueAtTime(0.001, time + 0.03);
+  o.connect(g); g.connect(masterGain);
+  o.start(time); o.stop(time + 0.04);
+}
+
+// --- Dot Previews ---
+function renderDotPreviews() {
+  const style = STYLES[currentStyleKey];
+  const show = gameMode === 'sampler' || gameMode === 'edit';
+  for (let i = 0; i < 9; i++) {
+    const dp = document.getElementById(`dp${i}`);
+    if (!dp) continue;
+    dp.classList.toggle('visible', show);
+    if (!show) continue;
+    const pat = (i === editingPad) ? editStepState : style.instruments[i].pattern;
+    dp.innerHTML = '';
+    for (let s = 0; s < 16; s++) {
+      if (s > 0 && s % 4 === 0) {
+        const gap = document.createElement('span');
+        gap.className = 'dp-gap';
+        dp.appendChild(gap);
+      }
+      const dot = document.createElement('span');
+      dot.className = 'dp' + (pat[s] ? ' on' : '');
+      dp.appendChild(dot);
+    }
+  }
+}
+
+function renderDotPreview(i) {
+  const dp = document.getElementById(`dp${i}`);
+  if (!dp) return;
+  const style = STYLES[currentStyleKey];
+  const pat = (i === editingPad) ? editStepState : style.instruments[i].pattern;
+  dp.innerHTML = '';
+  for (let s = 0; s < 16; s++) {
+    if (s > 0 && s % 4 === 0) {
+      const gap = document.createElement('span');
+      gap.className = 'dp-gap';
+      dp.appendChild(gap);
+    }
+    const dot = document.createElement('span');
+    dot.className = 'dp' + (pat[s] ? ' on' : '');
+    dp.appendChild(dot);
+  }
+}
+
+// ============================================================
 // DOM
 // ============================================================
 const gridEl = document.getElementById('grid');
@@ -1661,10 +2168,12 @@ function buildGrid() {
       <span class="inst-icon">${inst.icon}</span>
       <span class="inst-name">${inst.name}</span>
       <span class="cell-player${board[i] ? (' '+board[i].toLowerCase()+' show') : ''}" id="cp${i}">${board[i]||''}</span>
+      <div class="dot-preview" id="dp${i}"></div>
     `;
     cell.addEventListener('click', () => makeMove(i));
     gridEl.appendChild(cell);
   }
+  renderDotPreviews();
 }
 
 function buildStepRow() {
@@ -1681,25 +2190,64 @@ function makeMove(i) {
   initAudio();
   if (ctx.state === 'suspended') ctx.resume();
 
-  // === SAMPLER MODE: toggle on/off ===
+  // === SAMPLER MODE: select pad for editing ===
   if (gameMode === 'sampler') {
-    activeCells[i] = !activeCells[i];
-    const cell = gridEl.children[i];
-    const cp = document.getElementById(`cp${i}`);
-    if (activeCells[i]) {
-      cell.classList.add('taken', 'active-x');
-      cp.textContent = '▶'; cp.className = 'cell-player x show';
-      if (!isPlaying) startSequencer();
+    // Toggle pad active state AND select for editing
+    if (editingPad === i) {
+      // Tapping same pad: deselect edit, but keep active
+      deselectPad();
     } else {
-      cell.classList.remove('taken', 'active-x');
-      cp.textContent = ''; cp.className = 'cell-player';
-      if (activeCells.every(c => !c)) stopSequencer();
+      // Activate pad if not already active
+      if (!activeCells[i]) {
+        activeCells[i] = true;
+        const cell = gridEl.children[i];
+        const cp = document.getElementById(`cp${i}`);
+        cell.classList.add('taken', 'active-x');
+        cp.textContent = '▶'; cp.className = 'cell-player x show';
+        if (!isPlaying) startSequencer();
+      }
+      selectPadForEdit(i);
     }
     updateLayerCount();
     playBlip('X');
-    const count = activeCells.filter(Boolean).length;
-    msgEl.textContent = count ? `${count} layer${count>1?'s':''} active` : 'Tap pads to jam';
-    msgEl.className = 'message-text';
+    return;
+  }
+
+  // === EDIT MODE: solo pad editing ===
+  if (gameMode === 'edit') {
+    if (editingPad === i) {
+      // Tapping same pad: deselect, stop solo
+      deselectPad();
+      activeCells[i] = false;
+      const cell = gridEl.children[i];
+      cell.classList.remove('taken', 'active-x');
+      const cp = document.getElementById(`cp${i}`);
+      cp.textContent = ''; cp.className = 'cell-player';
+      if (activeCells.every(c => !c)) stopSequencer();
+    } else {
+      // Deselect previous pad if any
+      if (editingPad !== null) {
+        const prevIdx = editingPad;
+        if (patternUndoStack.length > 0) flashSaved();
+        deselectPad();
+        activeCells[prevIdx] = false;
+        const prevCell = gridEl.children[prevIdx];
+        prevCell.classList.remove('taken', 'active-x');
+        const prevCp = document.getElementById(`cp${prevIdx}`);
+        prevCp.textContent = ''; prevCp.className = 'cell-player';
+      }
+      // Activate and select new pad
+      activeCells[i] = true;
+      const cell = gridEl.children[i];
+      const cp = document.getElementById(`cp${i}`);
+      cell.classList.add('taken', 'active-x');
+      cp.textContent = '▶'; cp.className = 'cell-player x show';
+      selectPadForEdit(i);
+      if (!isPlaying) startSequencer();
+    }
+    updateLayerCount();
+    playBlip('X');
+    renderDotPreviews();
     return;
   }
 
@@ -1818,6 +2366,7 @@ function updateLayerCount() {
 }
 
 function undo() {
+  if (gameMode === 'edit') { undoPatternEdit(); return; }
   if (history.length === 0 || gameOver) return;
   const steps = (gameMode === 'ai' && history.length >= 2 && currentPlayer === 'X') ? 2 : 1;
   for (let s = 0; s < steps; s++) {
@@ -1836,6 +2385,7 @@ function undo() {
 }
 
 function resetGame() {
+  deselectPad();
   stopSequencer();
   board = Array(9).fill(null);
   activeCells = Array(9).fill(false);
@@ -1843,7 +2393,7 @@ function resetGame() {
   winPhase = null; winStepsLeft = 0; winCells = null;
   bpm = baseBpm;
   document.getElementById('bpmDisplay').textContent = bpm + ' BPM';
-  msgEl.textContent = gameMode === 'sampler' ? 'Tap pads to jam' : 'Player X — Select a pad';
+  msgEl.textContent = gameMode === 'edit' ? 'Tap a pad to edit its pattern' : gameMode === 'sampler' ? 'Tap pads to jam' : 'Player X — Select a pad';
   msgEl.className = 'message-text';
   updateLayerCount();
   resetFxPads();
@@ -1912,8 +2462,18 @@ function toggleFeel() {
 function applyStyle(key) {
   const style = STYLES[key];
   if (!style) return;
+  deselectPad();
   stopSequencer();
+  // Restore default patterns for previous genre (undo any user edits)
+  if (currentStyleKey && DEFAULT_PATTERNS[currentStyleKey]) {
+    const prevStyle = STYLES[currentStyleKey];
+    const prevDefs = DEFAULT_PATTERNS[currentStyleKey];
+    prevStyle.instruments.forEach((inst, i) => { inst.pattern = prevDefs[i].slice(); });
+  }
   currentStyleKey = key;
+  // Restore default patterns for new genre
+  const defs = DEFAULT_PATTERNS[key];
+  style.instruments.forEach((inst, i) => { inst.pattern = defs[i].slice(); });
   bpm = style.bpm; baseBpm = style.bpm;
 
   const root = document.documentElement;
@@ -2046,32 +2606,35 @@ function tapTempo() {
 }
 
 function toggleMode() {
-  const modes = ['2p', 'ai', 'sampler'];
-  const labels = ['2P', 'AI', 'JAM'];
+  deselectPad();
+  const modes = ['2p', 'ai', 'sampler', 'edit'];
+  const labels = ['2P', 'AI', 'JAM', 'EDIT'];
   const idx = (modes.indexOf(gameMode) + 1) % modes.length;
   gameMode = modes[idx];
   localStorage.setItem('mp401-gameMode', gameMode);
   document.getElementById('modeBtn').textContent = labels[idx];
   resetGame();
-  if (gameMode === 'sampler') {
-    msgEl.textContent = 'Tap pads to jam';
+  if (gameMode === 'sampler' || gameMode === 'edit') {
+    msgEl.textContent = gameMode === 'edit' ? 'Tap a pad to edit its pattern' : 'Tap pads to jam';
     document.querySelector('.score-bar').style.opacity = '0.3';
   } else {
     document.querySelector('.score-bar').style.opacity = '1';
   }
+  renderDotPreviews();
 }
 
 function restoreMode() {
-  const modes = ['2p', 'ai', 'sampler'];
-  const labels = ['2P', 'AI', 'JAM'];
+  const modes = ['2p', 'ai', 'sampler', 'edit'];
+  const labels = ['2P', 'AI', 'JAM', 'EDIT'];
   const idx = modes.indexOf(gameMode);
   if (idx > 0) {
     document.getElementById('modeBtn').textContent = labels[idx];
-    if (gameMode === 'sampler') {
-      msgEl.textContent = 'Tap pads to jam';
+    if (gameMode === 'sampler' || gameMode === 'edit') {
+      msgEl.textContent = gameMode === 'edit' ? 'Tap a pad to edit its pattern' : 'Tap pads to jam';
       document.querySelector('.score-bar').style.opacity = '0.3';
     }
   }
+  renderDotPreviews();
 }
 
 // ============================================================
@@ -2209,6 +2772,7 @@ setupKnob(document.getElementById('knobBpm'), 'bpm');
 setupKnob(document.getElementById('knobSwing'), 'swing');
 setupKnob(document.getElementById('knobFilter'), 'filter');
 setupFxPads();
+setupCarouselTouch();
 applyStyle('hiphop');
 buildStepRow();
 restoreMode();
