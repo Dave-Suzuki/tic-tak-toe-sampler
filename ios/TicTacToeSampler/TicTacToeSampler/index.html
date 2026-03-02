@@ -1679,9 +1679,8 @@ function scheduleStep(step, time) {
   const style = STYLES[currentStyleKey];
 
   if (winPhase === 'break') {
-    // Only play bass + pad (solo instruments)
-    for (const i of BREAK_SOLO) {
-      if (!activeCells[i]) continue;
+    // Play only the 3 winning cells — matches the visual win line
+    for (const i of (winCells || BREAK_SOLO)) {
       const inst = style.instruments[i];
       const fn = synth[inst.type];
       if (fn) {
@@ -1910,9 +1909,8 @@ function updateStepVisual(step) {
   const style = STYLES[currentStyleKey];
 
   if (winPhase === 'break') {
-    // Only flash break-solo cells
-    for (const i of BREAK_SOLO) {
-      if (!activeCells[i]) continue;
+    // Flash winning cells during break
+    for (const i of (winCells || BREAK_SOLO)) {
       const val = style.instruments[i].pattern[step];
       if (val) {
         const cell = gridEl.children[i];
@@ -2453,8 +2451,6 @@ function makeMove(i) {
 
     winPhase = 'break';
     winStepsLeft = 32;
-    // Force-activate bass + pad so break always has sound
-    BREAK_SOLO.forEach(i => { activeCells[i] = true; });
     msgEl.textContent = `Player ${currentPlayer} wins — BREAK`;
     msgEl.className = 'message-text win-break';
     document.getElementById('device').classList.add('win-break');
