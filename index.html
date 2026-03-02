@@ -829,8 +829,8 @@
 
   <div class="controls">
     <button class="btn" onclick="undo()">&#8592; Undo</button>
-    <button class="btn primary" onclick="resetGame()">New Game</button>
-    <button class="btn" onclick="resetAll()">Reset</button>
+    <button class="btn primary" id="newGameBtn" onclick="resetGame()">New Game</button>
+    <button class="btn" id="resetBtn" onclick="resetAll()">Reset</button>
   </div>
 
   <div class="knob-row">
@@ -2684,6 +2684,33 @@ function tapTempo() {
   }
 }
 
+function updateEditControls() {
+  const ngBtn = document.getElementById('newGameBtn');
+  const rstBtn = document.getElementById('resetBtn');
+  if (gameMode === 'edit') {
+    ngBtn.textContent = 'Reset Patterns';
+    ngBtn.onclick = resetPatterns;
+    rstBtn.style.display = 'none';
+  } else {
+    ngBtn.textContent = 'New Game';
+    ngBtn.onclick = resetGame;
+    rstBtn.style.display = '';
+  }
+}
+
+function resetPatterns() {
+  deselectPad();
+  const style = STYLES[currentStyleKey];
+  const defs = DEFAULT_PATTERNS[currentStyleKey];
+  style.instruments.forEach((inst, i) => { inst.pattern = defs[i].slice(); });
+  stopSequencer();
+  activeCells = Array(9).fill(false);
+  buildGrid();
+  renderDotPreviews();
+  msgEl.textContent = 'Patterns reset — Tap a pad to edit';
+  setTimeout(() => { if (gameMode === 'edit' && editingPad === null) msgEl.textContent = 'Tap a pad to edit its pattern'; }, 1500);
+}
+
 function toggleMode() {
   deselectPad();
   const modes = ['2p', 'ai', 'sampler', 'edit'];
@@ -2699,6 +2726,7 @@ function toggleMode() {
   } else {
     document.querySelector('.score-bar').style.opacity = '1';
   }
+  updateEditControls();
   renderDotPreviews();
 }
 
@@ -2713,6 +2741,7 @@ function restoreMode() {
       document.querySelector('.score-bar').style.opacity = '0.3';
     }
   }
+  updateEditControls();
   renderDotPreviews();
 }
 
