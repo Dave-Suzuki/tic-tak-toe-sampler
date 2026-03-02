@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tic Tac Tone — Play a Game, Make a Beat</title>
+<meta name="description" content="A tic-tac-toe game where every move builds a beat. 8 genres, real-time effects, pattern editor. Free on web, full experience on iOS.">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #2A2520; background: #E5DDD3; line-height: 1.6;
+  }
+  a { color: #D4736E; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Hero */
+  .hero {
+    text-align: center; padding: 60px 20px 48px;
+    background: linear-gradient(180deg, #D6CEC4 0%, #E5DDD3 100%);
+  }
+  .hero-icon {
+    width: 100px; height: 100px; margin: 0 auto 20px;
+    background: #D4736E; border-radius: 22px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 48px; line-height: 1;
+    box-shadow: 0 4px 16px rgba(212,115,110,0.3);
+  }
+  .hero h1 { font-size: 36px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
+  .hero .tagline { font-size: 18px; color: #7A7068; margin-bottom: 24px; }
+  .hero .pitch { max-width: 520px; margin: 0 auto 32px; font-size: 16px; color: #4A4038; }
+  .hero-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-block; padding: 12px 28px; border-radius: 10px;
+    font-size: 16px; font-weight: 600; transition: opacity 0.2s;
+  }
+  .btn:hover { opacity: 0.85; text-decoration: none; }
+  .btn-primary { background: #D4736E; color: #fff; }
+  .btn-secondary { background: #D0C8BE; color: #2A2520; }
+
+  /* Sections */
+  .section { max-width: 700px; margin: 0 auto; padding: 48px 20px; }
+  .section h2 {
+    font-size: 24px; font-weight: 700; margin-bottom: 20px;
+    padding-bottom: 8px; border-bottom: 2px solid #D0C8BE;
+  }
+
+  /* Features grid */
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+  .feature-card {
+    background: #fff; border-radius: 12px; padding: 20px;
+    border: 1px solid #D0C8BE;
+  }
+  .feature-card .icon { font-size: 28px; margin-bottom: 8px; }
+  .feature-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  .feature-card p { font-size: 14px; color: #7A7068; }
+
+  /* Genres */
+  .genres-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  .genre-tag {
+    background: #fff; border: 1px solid #D0C8BE; border-radius: 8px;
+    padding: 12px 16px; text-align: center;
+  }
+  .genre-tag .name { font-weight: 600; font-size: 15px; }
+  .genre-tag .bpm { font-size: 13px; color: #7A7068; }
+  .genre-tag .vibe { font-size: 12px; color: #B0A89E; margin-top: 2px; }
+
+  /* Comparison */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+  @media (max-width: 500px) { .compare { grid-template-columns: 1fr; } }
+  .compare-col {
+    background: #fff; border: 1px solid #D0C8BE; border-radius: 12px; padding: 20px;
+  }
+  .compare-col h3 { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+  .compare-col .badge {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 4px; margin-bottom: 12px;
+  }
+  .badge-free { background: #E8F5E9; color: #2E7D32; }
+  .badge-full { background: #FFF3E0; color: #E65100; }
+  .compare-col ul { list-style: none; padding: 0; }
+  .compare-col li { font-size: 14px; padding: 4px 0; color: #4A4038; }
+  .compare-col li::before { content: "\2713 "; color: #D4736E; font-weight: 700; margin-right: 4px; }
+  .compare-cta { text-align: center; margin-top: 20px; }
+
+  /* Footer */
+  .footer {
+    text-align: center; padding: 32px 20px;
+    border-top: 1px solid #D0C8BE; color: #7A7068; font-size: 14px;
+  }
+  .footer-links { margin-bottom: 12px; }
+  .footer-links a { margin: 0 10px; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-icon">#</div>
+  <h1>Tic Tac Tone</h1>
+  <p class="tagline">Play a game, make a beat</p>
+  <p class="pitch">
+    Every move on the 3&times;3 grid activates a synthesized instrument &mdash; kick, snare, bass, keys, pads, and more. Two players take turns claiming pads, and each move adds a new layer to a looping beat. Get three in a row to win.
+  </p>
+  <div class="hero-buttons">
+    <a href="https://dave-suzuki.github.io/tic-tak-toe-sampler/" class="btn btn-primary">Try It Free</a>
+    <a href="guide.html" class="btn btn-secondary">User Guide</a>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Features</h2>
+  <div class="features">
+    <div class="feature-card">
+      <div class="icon">&#127925;</div>
+      <h3>8 Genres</h3>
+      <p>Hip-Hop, Techno, Lo-Fi, Ambient, Chiptune, Jungle, House, and Ragga &mdash; each with unique instruments and vibe.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">&#127898;</div>
+      <h3>Real-time FX</h3>
+      <p>XY pads for reverb, delay, distortion, and tremolo. Shape your sound while you play.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">&#9998;</div>
+      <h3>Pattern Editor</h3>
+      <p>Edit 16-step sequences for any instrument. Note carousel for melodic pads. Undo and auto-save.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">&#127918;</div>
+      <h3>4 Game Modes</h3>
+      <p>2-Player, vs AI, JAM (free sampler), and EDIT (pattern editor). Something for every session.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">&#128274;</div>
+      <h3>No Ads, No Tracking</h3>
+      <p>100% offline. No accounts, no data collection, no internet required. Just music and strategy.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">&#9201;</div>
+      <h3>Tap Tempo</h3>
+      <p>Match any BPM by tapping. Plus Swing for groove and Feel for humanized micro-timing.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Genres</h2>
+  <div class="genres-list">
+    <div class="genre-tag"><div class="name">Hip-Hop</div><div class="bpm">90 BPM</div><div class="vibe">Boom-bap grooves</div></div>
+    <div class="genre-tag"><div class="name">Techno</div><div class="bpm">128 BPM</div><div class="vibe">Driving 4/4 pulse</div></div>
+    <div class="genre-tag"><div class="name">Ambient</div><div class="bpm">75 BPM</div><div class="vibe">Ethereal textures</div></div>
+    <div class="genre-tag"><div class="name">Chiptune</div><div class="bpm">140 BPM</div><div class="vibe">Retro 8-bit energy</div></div>
+    <div class="genre-tag"><div class="name">Jungle</div><div class="bpm">155 BPM</div><div class="vibe">Breakbeat chaos</div></div>
+    <div class="genre-tag"><div class="name">Lo-Fi</div><div class="bpm">79 BPM</div><div class="vibe">Warm homework tape</div></div>
+    <div class="genre-tag"><div class="name">House</div><div class="bpm">124 BPM</div><div class="vibe">Classic four-on-the-floor</div></div>
+    <div class="genre-tag"><div class="name">Ragga</div><div class="bpm">88 BPM</div><div class="vibe">Kingston riddims</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Web vs iOS</h2>
+  <div class="compare">
+    <div class="compare-col">
+      <h3>Web Version</h3>
+      <span class="badge badge-free">Free</span>
+      <ul>
+        <li>4 genres</li>
+        <li>2-Player &amp; AI modes</li>
+        <li>BPM, TAP tempo, Swing</li>
+        <li>No install needed</li>
+        <li>Works on any device</li>
+      </ul>
+    </div>
+    <div class="compare-col">
+      <h3>iOS App</h3>
+      <span class="badge badge-full">Full Experience</span>
+      <ul>
+        <li>All 8 genres</li>
+        <li>4 modes (+ JAM &amp; EDIT)</li>
+        <li>Filter, Feel, XY effect pads</li>
+        <li>Pattern editor with note carousel</li>
+        <li>Silent mode audio, AirPlay</li>
+        <li>Auto-recovery after multitasking</li>
+        <li>Offline, portrait lock</li>
+      </ul>
+    </div>
+  </div>
+  <div class="compare-cta">
+    <p style="margin:20px 0 12px;color:#7A7068;font-size:15px;">Try it free in your browser. Get the full experience on iOS.</p>
+    <a href="https://dave-suzuki.github.io/tic-tak-toe-sampler/" class="btn btn-primary" style="margin-right:8px;">Play Now</a>
+    <!-- <a href="#" class="btn btn-secondary">App Store</a> -->
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-links">
+    <a href="guide.html">User Guide</a>
+    <a href="support.html">Support</a>
+    <a href="privacy-policy.html">Privacy Policy</a>
+  </div>
+  <p>&copy; 2026 Dave Suzuki &mdash; <a href="mailto:info@crosstown-experience.com">info@crosstown-experience.com</a></p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tic Tac Tone — User Guide</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    max-width: 700px; margin: 0 auto; padding: 0 20px 60px;
+    color: #2A2520; background: #E5DDD3; line-height: 1.7;
+  }
+  a { color: #D4736E; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Header */
+  .guide-header {
+    text-align: center; padding: 40px 0 32px;
+    border-bottom: 2px solid #D0C8BE; margin-bottom: 32px;
+  }
+  .guide-header h1 { font-size: 30px; font-weight: 700; }
+  .guide-header p { color: #7A7068; font-size: 15px; margin-top: 4px; }
+
+  /* TOC */
+  .toc { background: #fff; border: 1px solid #D0C8BE; border-radius: 12px; padding: 20px 24px; margin-bottom: 36px; }
+  .toc h2 { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+  .toc ol { padding-left: 20px; }
+  .toc li { font-size: 14px; padding: 3px 0; }
+  .toc a { color: #2A2520; }
+  .toc a:hover { color: #D4736E; }
+
+  /* Sections */
+  h2 {
+    font-size: 22px; font-weight: 700; margin: 40px 0 12px;
+    padding-bottom: 6px; border-bottom: 2px solid #D0C8BE;
+  }
+  h3 { font-size: 17px; font-weight: 600; margin: 20px 0 8px; color: #D4736E; }
+  p { margin: 10px 0; }
+  ul, ol { margin: 10px 0 10px 20px; }
+  li { margin: 4px 0; }
+
+  /* Info boxes */
+  .tip {
+    background: #FFF8F0; border-left: 4px solid #D4736E;
+    padding: 12px 16px; border-radius: 0 8px 8px 0;
+    margin: 16px 0; font-size: 14px;
+  }
+  .tip strong { color: #D4736E; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; }
+  th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid #D0C8BE; }
+  th { font-weight: 600; background: #D6CEC4; }
+
+  /* Footer */
+  .guide-footer {
+    text-align: center; padding: 32px 0;
+    border-top: 1px solid #D0C8BE; margin-top: 40px;
+    color: #7A7068; font-size: 14px;
+  }
+  .guide-footer a { margin: 0 10px; }
+</style>
+</head>
+<body>
+
+<div class="guide-header">
+  <h1>Tic Tac Tone &mdash; User Guide</h1>
+  <p>Complete guide to the iOS app</p>
+</div>
+
+<div class="toc">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#getting-started">Getting Started</a></li>
+    <li><a href="#game-modes">Game Modes</a></li>
+    <li><a href="#the-grid">The Grid</a></li>
+    <li><a href="#winning">Winning &amp; Break</a></li>
+    <li><a href="#genres">Genres</a></li>
+    <li><a href="#controls">Controls</a></li>
+    <li><a href="#effects">Effects (XY Pads)</a></li>
+    <li><a href="#edit-mode">Edit Mode (Pattern Editor)</a></li>
+    <li><a href="#tips">Tips &amp; Tricks</a></li>
+    <li><a href="#troubleshooting">Troubleshooting</a></li>
+  </ol>
+</div>
+
+<!-- 1. Getting Started -->
+<h2 id="getting-started">1. Getting Started</h2>
+<p>Tic Tac Tone turns the classic tic-tac-toe game into a music-making experience. Every move on the 3&times;3 grid activates a synthesized instrument &mdash; kick, snare, bass, keys, pads, and more.</p>
+<p>Two players take turns claiming pads. Each claimed square adds a new layer to a looping beat that builds as the game progresses. Get three in a row to win &mdash; and hear your winning instruments featured in a special break.</p>
+
+<div class="tip"><strong>First tap:</strong> Audio starts when you make your first move. Make sure your device is not on silent mode.</div>
+
+<!-- 2. Game Modes -->
+<h2 id="game-modes">2. Game Modes</h2>
+<p>Tap the <strong>MODE</strong> button to cycle through four modes:</p>
+
+<h3>2P &mdash; Two Player</h3>
+<p>Two players share the device, taking turns as X and O. Each move claims a pad and activates its instrument. Three in a row wins.</p>
+
+<h3>AI &mdash; vs Computer</h3>
+<p>Play as X against the computer (O). The AI uses a smart strategy to challenge you. The AI takes its turn automatically after a short delay.</p>
+
+<h3>JAM &mdash; Free Sampler</h3>
+<p>No rules, no turns, no winning. Tap any pad to toggle it on or off. Build up layers freely and experiment with different combinations. Great for creative exploration.</p>
+
+<h3>EDIT &mdash; Pattern Editor</h3>
+<p>Select any pad to edit its 16-step sequencer pattern. Change which steps are active, adjust note pitches for melodic instruments, and craft your own beats. See <a href="#edit-mode">Edit Mode</a> for full details.</p>
+
+<!-- 3. The Grid -->
+<h2 id="the-grid">3. The Grid</h2>
+<p>The 3&times;3 grid is the heart of the game. Each of the 9 cells corresponds to a different instrument:</p>
+
+<table>
+  <tr><th>Position</th><th>Typical Instrument</th><th>Category</th></tr>
+  <tr><td>01 (top-left)</td><td>Kick</td><td>Drums</td></tr>
+  <tr><td>02 (top-center)</td><td>Snare / Clap</td><td>Drums</td></tr>
+  <tr><td>03 (top-right)</td><td>Hi-Hat</td><td>Drums</td></tr>
+  <tr><td>04 (mid-left)</td><td>Bass</td><td>Melodic</td></tr>
+  <tr><td>05 (center)</td><td>Chord / Stab</td><td>Melodic</td></tr>
+  <tr><td>06 (mid-right)</td><td>Arp / Pluck</td><td>Melodic</td></tr>
+  <tr><td>07 (bottom-left)</td><td>Perc / Click</td><td>Percussion</td></tr>
+  <tr><td>08 (bottom-center)</td><td>Pad</td><td>Texture</td></tr>
+  <tr><td>09 (bottom-right)</td><td>Lead</td><td>Melodic</td></tr>
+</table>
+
+<p>Instrument names and sounds change with each genre, but the layout stays the same. The <strong>layer count</strong> in the bottom-right shows how many pads are currently active.</p>
+
+<div class="tip"><strong>Dot preview:</strong> The small dots below the grid show the step position as the sequencer loops, giving you a visual pulse of the rhythm.</div>
+
+<!-- 4. Winning & Break -->
+<h2 id="winning">4. Winning &amp; Break</h2>
+<p>Get three of your marks in a row &mdash; horizontally, vertically, or diagonally &mdash; to win. An animated line draws across your winning cells.</p>
+
+<h3>The Break</h3>
+<p>When someone wins, the sequencer enters a <strong>32-step break</strong>. During the break, only the three winning instruments play &mdash; a stripped-back moment that highlights your winning combination before the game resets.</p>
+
+<h3>Scoring</h3>
+<p>Scores track across multiple games: Player X wins, Player O wins, and Draws. Use the <strong>RESET</strong> button to clear all scores and start fresh.</p>
+
+<h3>Draw</h3>
+<p>If all 9 cells are claimed with no winner, it's a draw. All instruments keep playing &mdash; a full 9-layer mix.</p>
+
+<!-- 5. Genres -->
+<h2 id="genres">5. Genres</h2>
+<p>Tap the genre buttons at the top to switch between 8 distinct music styles. Use the arrows to see all genres (4 per page). Each genre brings its own tempo, instruments, and color scheme.</p>
+
+<table>
+  <tr><th>Genre</th><th>BPM</th><th>Character</th></tr>
+  <tr><td>Hip-Hop</td><td>90</td><td>Boom-bap grooves with punchy kick and warm bass</td></tr>
+  <tr><td>Techno</td><td>128</td><td>Driving 4/4 pulse with sharp hats and acid bass</td></tr>
+  <tr><td>Ambient</td><td>75</td><td>Ethereal textures, soft pads, floating arpeggios</td></tr>
+  <tr><td>Chiptune</td><td>140</td><td>Retro 8-bit energy with square and pulse waves</td></tr>
+  <tr><td>Jungle</td><td>155</td><td>Fast breakbeats, rolling bass, chopped percussion</td></tr>
+  <tr><td>Lo-Fi</td><td>79</td><td>Warm homework tape feel with rain textures</td></tr>
+  <tr><td>House</td><td>124</td><td>Classic four-on-the-floor with soulful chords</td></tr>
+  <tr><td>Ragga</td><td>88</td><td>Kingston riddims with skank chords and deep bass</td></tr>
+</table>
+
+<div class="tip"><strong>Genre switching:</strong> You can change genres at any time, even mid-game. The instruments change instantly while the game state stays the same.</div>
+
+<!-- 6. Controls -->
+<h2 id="controls">6. Controls</h2>
+<p>The control row sits below the game buttons. Drag vertically on knobs to adjust their values.</p>
+
+<h3>BPM (40&ndash;200)</h3>
+<p>Controls the tempo of the sequencer. Drag up to increase, down to decrease. The current BPM displays in the header.</p>
+
+<h3>TAP Tempo</h3>
+<p>Tap the TAP button 3 or more times in rhythm to set the BPM. Useful for matching external music or setting a feel by hand.</p>
+
+<h3>Swing (0&ndash;100%)</h3>
+<p>Adds shuffle to the rhythm by delaying every other step. At 0% the beat is straight; higher values create a more laid-back, swung feel.</p>
+
+<h3>Filter</h3>
+<p>Sweep the frequency filter across all instruments. Turn left for a lowpass sweep (muffled), center for off, right for highpass (thin/bright).</p>
+
+<h3>Feel</h3>
+<p>Toggles humanized micro-timing. When on, each instrument gets subtle timing variations that make the beat feel more natural and less robotic.</p>
+
+<h3>Mode</h3>
+<p>Cycles through game modes: 2P &rarr; AI &rarr; JAM &rarr; EDIT. The current mode displays on the button.</p>
+
+<!-- 7. Effects -->
+<h2 id="effects">7. Effects (XY Pads)</h2>
+<p>Two XY control surfaces at the bottom of the screen let you shape the sound in real time. Drag your finger across the pad to adjust two parameters simultaneously.</p>
+
+<h3>Left Pad</h3>
+<ul>
+  <li><strong>X-axis (horizontal):</strong> Reverb &mdash; adds space and depth</li>
+  <li><strong>Y-axis (vertical):</strong> Delay &mdash; adds echoing repeats</li>
+</ul>
+
+<h3>Right Pad</h3>
+<ul>
+  <li><strong>X-axis (horizontal):</strong> Distortion &mdash; adds grit and saturation</li>
+  <li><strong>Y-axis (vertical):</strong> Tremolo &mdash; modulates volume for a pulsing effect</li>
+</ul>
+
+<div class="tip"><strong>Start subtle:</strong> A little goes a long way. Start from the bottom-left corner (no effects) and drag slowly to add flavor.</div>
+
+<!-- 8. Edit Mode -->
+<h2 id="edit-mode">8. Edit Mode (Pattern Editor)</h2>
+<p>Edit mode lets you customize the 16-step pattern for any instrument.</p>
+
+<h3>Getting Started</h3>
+<ol>
+  <li>Tap <strong>MODE</strong> until it shows <strong>EDIT</strong></li>
+  <li>Tap any pad on the grid to select it for editing</li>
+  <li>The <strong>step strip</strong> appears showing 16 steps (4 groups of 4)</li>
+</ol>
+
+<h3>Editing Steps</h3>
+<p>Tap any step to toggle it on or off. Active steps light up. The sequencer plays in solo mode &mdash; only the pad you're editing is audible, with a metronome click on downbeats (steps 1, 5, 9, 13) for timing reference.</p>
+
+<h3>Note Carousel (Melodic Instruments)</h3>
+<p>For melodic pads (Bass, Lead, Arp, Chord), tapping an active step opens the <strong>note carousel</strong>. Drag vertically to scroll through available notes. Notes are derived from the genre's scale, so everything stays musical.</p>
+
+<h3>Saving &amp; Undoing</h3>
+<ul>
+  <li><strong>Auto-save:</strong> Changes apply instantly as you edit</li>
+  <li><strong>OK:</strong> Confirms your edits and deselects the pad</li>
+  <li><strong>Cancel:</strong> Reverts all changes you made since selecting the pad</li>
+  <li><strong>Undo:</strong> Steps back through your edit history one change at a time</li>
+  <li><strong>Switching pads:</strong> If you tap a different pad while editing, your current changes are automatically saved (you'll see a brief "Saved" indicator)</li>
+</ul>
+
+<!-- 9. Tips & Tricks -->
+<h2 id="tips">9. Tips &amp; Tricks</h2>
+<ul>
+  <li><strong>Switch genres mid-game</strong> &mdash; The beat changes instantly while the game board stays. Try the same moves in different genres for completely different results.</li>
+  <li><strong>Use Swing for groove</strong> &mdash; Even a small amount of Swing (15&ndash;25%) transforms a rigid beat into something that grooves.</li>
+  <li><strong>Win break strategy</strong> &mdash; Your winning three cells play solo during the break. Try to win with a combination that sounds good together (e.g., Kick + Snare + Hi-Hat for a drum break).</li>
+  <li><strong>Layer FX gradually</strong> &mdash; Start with the XY pads at the origin and slowly introduce reverb or delay as the game progresses and more layers build up.</li>
+  <li><strong>TAP tempo</strong> &mdash; Tap along with a song or video to sync the beat's BPM in real time.</li>
+  <li><strong>JAM mode for exploration</strong> &mdash; Use JAM mode to freely toggle pads on and off. Find combinations you like, then switch to 2P or AI to build up to them through gameplay.</li>
+  <li><strong>Edit mode for custom beats</strong> &mdash; Customize every instrument's pattern in EDIT mode, then switch back to 2P to play a game with your custom beat.</li>
+</ul>
+
+<!-- 10. Troubleshooting -->
+<h2 id="troubleshooting">10. Troubleshooting</h2>
+
+<h3>No sound?</h3>
+<ul>
+  <li>Check that your device is <strong>not on silent mode</strong> (the physical switch on the side of your iPhone)</li>
+  <li>Audio starts on the first tap &mdash; make sure you've tapped a pad</li>
+  <li>Try increasing the volume with the side buttons</li>
+</ul>
+
+<h3>Audio stopped after switching apps?</h3>
+<p>The app automatically recovers audio when you return from multitasking. If automatic recovery fails, a <strong>"Tap to resume audio"</strong> banner will appear &mdash; just tap it.</p>
+
+<h3>System requirements</h3>
+<p>Tic Tac Tone requires <strong>iOS 17.0 or later</strong>.</p>
+
+<!-- Footer -->
+<div class="guide-footer">
+  <a href="index.html">Home</a>
+  <a href="support.html">Support</a>
+  <a href="privacy-policy.html">Privacy Policy</a>
+  <br><br>
+  <p>&copy; 2026 Dave Suzuki &mdash; <a href="mailto:info@crosstown-experience.com">info@crosstown-experience.com</a></p>
+</div>
+
+</body>
+</html>
