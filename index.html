@@ -1680,10 +1680,13 @@ function scheduleStep(step, time) {
 
   if (winPhase === 'break') {
     // Play only the 3 winning cells — matches the visual win line
-    for (const i of (winCells || BREAK_SOLO)) {
+    var breakCells = winCells || BREAK_SOLO;
+    if (step === 0) console.log('[break] cells=' + JSON.stringify(breakCells) + ' ctx=' + (ctx ? ctx.state : 'null') + ' left=' + winStepsLeft);
+    for (const i of breakCells) {
       const inst = style.instruments[i];
       const fn = synth[inst.type];
       if (fn) {
+        if (step === 0) console.log('[break] playing cell ' + i + ' type=' + inst.type + ' pat[0]=' + inst.pattern[0]);
         if (feelOn) {
           const pat = getVariedPattern(inst.pattern, inst.type, barCount);
           const hp = humanizeParams(inst.params, inst.type);
