@@ -9,6 +9,22 @@ struct WebView: UIViewRepresentable {
         config.allowsInlineMediaPlayback = true
         config.allowsAirPlayForMediaPlayback = true
 
+        // Bridge JS console.log to Xcode console via message handler
+        let userContent = config.userContentController
+        let coordinator = context.coordinator
+        userContent.add(coordinator, name: "logHandler")
+        let consoleOverride = WKUserScript(source: """
+            (function() {
+                var origLog = console.log;
+                console.log = function() {
+                    var msg = Array.prototype.slice.call(arguments).join(' ');
+                    origLog.apply(console, arguments);
+                    window.webkit.messageHandlers.logHandler.postMessage(msg);
+                };
+            })();
+            """, injectionTime: .atDocumentStart, forMainFrameOnly: true)
+        userContent.addUserScript(consoleOverride)
+
         let webView = WKWebView(frame: .zero, configuration: config)
 
         webView.scrollView.bounces = false
@@ -20,6 +36,12 @@ struct WebView: UIViewRepresentable {
         webView.scrollView.backgroundColor = .clear
 
         webView.allowsLinkPreview = false
+
+        #if DEBUG
+        if #available(iOS 16.4, *) {
+            webView.isInspectable = true
+        }
+        #endif
 
         webView.navigationDelegate = context.coordinator
         context.coordinator.webView = webView
@@ -44,8 +66,15 @@ struct WebView: UIViewRepresentable {
         Coordinator()
     }
 
-    class Coordinator: NSObject, WKNavigationDelegate {
+    class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
         weak var webView: WKWebView?
+
+        func userContentController(_ userContentController: WKUserContentController,
+                                   didReceive message: WKScriptMessage) {
+            if message.name == "logHandler", let body = message.body as? String {
+                print("[JS] \(body)")
+            }
+        }
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
             let disableSelectionJS = """
