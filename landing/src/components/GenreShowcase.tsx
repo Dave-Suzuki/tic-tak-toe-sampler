@@ -11,7 +11,7 @@ export function GenreShowcase() {
   ]
 
   return (
-    <div className="py-32 px-6 bg-white">
+    <div id="features" className="py-32 px-6 bg-neutral-50">
       <div className="max-w-[1400px] mx-auto">
         <div className="text-center mb-20">
           <h2 className="text-7xl tracking-tight mb-6">8 genres</h2>
@@ -24,7 +24,7 @@ export function GenreShowcase() {
           {genres.map((genre) => (
             <div
               key={genre.name}
-              className="border border-black/10 p-6 hover:bg-neutral-50 transition-colors"
+              className="border border-black/10 p-6 hover:bg-white transition-colors"
             >
               <div className="flex justify-between items-baseline mb-4">
                 <h3 className="text-2xl tracking-tight">{genre.name}</h3>
@@ -35,6 +35,28 @@ export function GenreShowcase() {
               </p>
             </div>
           ))}
+        </div>
+
+        {/* Specs */}
+        <div className="mt-32 pt-16 border-t border-black/10">
+          <div className="grid md:grid-cols-4 gap-12 text-center">
+            <div>
+              <div className="text-5xl tracking-tight mb-2">9</div>
+              <div className="text-black/60">instruments</div>
+            </div>
+            <div>
+              <div className="text-5xl tracking-tight mb-2">8</div>
+              <div className="text-black/60">genres</div>
+            </div>
+            <div>
+              <div className="text-5xl tracking-tight mb-2">16</div>
+              <div className="text-black/60">steps per pattern</div>
+            </div>
+            <div>
+              <div className="text-5xl tracking-tight mb-2">&infin;</div>
+              <div className="text-black/60">creative combinations</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

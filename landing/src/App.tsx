@@ -2,7 +2,6 @@ import { Hero } from './components/Hero'
 import { ProductShowcase } from './components/ProductShowcase'
 import { HowItWorks } from './components/HowItWorks'
 import { GenreShowcase } from './components/GenreShowcase'
-import { Features } from './components/Features'
 import { Footer } from './components/Footer'
 
 export default function App() {
@@ -12,7 +11,6 @@ export default function App() {
       <ProductShowcase />
       <HowItWorks />
       <GenreShowcase />
-      <Features />
       <Footer />
     </div>
   )

@@ -19,20 +19,12 @@ export function ProductShowcase() {
           </div>
         </div>
 
-        {/* Description Grid */}
-        <div className="grid md:grid-cols-2 gap-16 max-w-[1200px] mx-auto">
-          <div>
-            <h2 className="text-5xl tracking-tight mb-6">game meets instrument</h2>
-            <p className="text-xl text-black/60 leading-relaxed">
-              two players. nine pads. one evolving beat. every move you make activates an instrument—kick, snare, bass, lead. claim three in a row to win and hear your combination play solo.
-            </p>
-          </div>
-          <div>
-            <h2 className="text-5xl tracking-tight mb-6">8 genres. infinite vibes</h2>
-            <p className="text-xl text-black/60 leading-relaxed">
-              from 90 bpm hip-hop to 155 bpm jungle breaks. switch genres mid-game and watch the same board transform into completely different music. ambient, techno, lo-fi, ragga—each with custom sounds and tempo.
-            </p>
-          </div>
+        {/* Description */}
+        <div className="max-w-[700px] mx-auto text-center">
+          <h2 className="text-5xl tracking-tight mb-6">game meets instrument</h2>
+          <p className="text-xl text-black/60 leading-relaxed">
+            two players. nine pads. one evolving beat. every move you make activates an instrument—kick, snare, bass, lead. claim three in a row to win and hear your combination play solo.
+          </p>
         </div>
       </div>
     </div>

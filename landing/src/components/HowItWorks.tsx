@@ -3,7 +3,7 @@ export function HowItWorks() {
     {
       number: '01',
       title: 'pick your mode',
-      description: '2P for head-to-head. AI to challenge the computer. JAM for free-form creativity with no rules. EDIT to customize every instrument\'s 16-step pattern.'
+      description: '2P for head-to-head. AI to challenge the computer. JAM for free-form creativity with no rules. EDIT to customize every instrument\'s 16-step pattern—toggle steps, adjust pitches, and solo each instrument.'
     },
     {
       number: '02',
@@ -23,7 +23,7 @@ export function HowItWorks() {
   ]
 
   return (
-    <div className="py-32 px-6 bg-white">
+    <div id="how-it-works" className="py-32 px-6 bg-white">
       <div className="max-w-[1400px] mx-auto">
         <h2 className="text-7xl tracking-tight mb-32 text-center">how it works</h2>
 
