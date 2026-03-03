@@ -9,7 +9,7 @@ export function Hero() {
           <div className="text-xl tracking-tight">tic tac tone</div>
           <div className="flex gap-8">
             <a href="#product" className="hover:opacity-60 transition-opacity">product</a>
-            <a href="#features" className="hover:opacity-60 transition-opacity">features</a>
+            <a href="#how-it-works" className="hover:opacity-60 transition-opacity">how it works</a>
             <a href="https://dave-suzuki.github.io/tic-tak-toe-sampler/" target="_blank" rel="noopener noreferrer" className="hover:opacity-60 transition-opacity">try it</a>
           </div>
         </div>
@@ -37,7 +37,7 @@ export function Hero() {
               <ArrowRight size={20} />
             </a>
             <a
-              href="#features"
+              href="#how-it-works"
               className="inline-flex items-center gap-2 px-8 py-4 border border-black hover:bg-black hover:text-white transition-colors"
             >
               learn more
