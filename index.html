@@ -1801,6 +1801,7 @@ function resumeAudioPlayback() {
     }
 
     ctx.resume().then(function() {
+      if (!ctx) return;
       // Validate: is currentTime actually advancing?
       var t0 = ctx.currentTime;
       setTimeout(function() {
@@ -2362,7 +2363,7 @@ function buildStepRow() {
 
 function makeMove(i) {
   initAudio();
-  if (ctx.state === 'suspended') ctx.resume();
+  if (ctx && ctx.state === 'suspended') ctx.resume();
 
   // === SAMPLER MODE: select pad for editing ===
   if (gameMode === 'sampler') {
