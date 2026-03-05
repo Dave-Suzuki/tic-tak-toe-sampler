@@ -899,7 +899,7 @@
     </div>
   </div>
 
-  <div class="footer"><span id="footer">TTT × HH-73 — 2026</span><span id="buildNum" style="opacity:0.4;font-size:9px;margin-left:6px">b10</span><button class="info-btn" id="infoBtn" aria-label="Info">i</button></div>
+  <div class="footer"><span id="footer">TTT × HH-73 — 2026</span><span id="buildNum" style="opacity:0.4;font-size:9px;margin-left:6px">b11</span><button class="info-btn" id="infoBtn" aria-label="Info">i</button></div>
 </div>
 
 <div class="edit-saved-flash" id="editSavedFlash">Saved</div>
@@ -1946,6 +1946,7 @@ let gameOver = false;
 let history = [];
 let scores = { X:0, O:0, D:0 };
 let gameMode = localStorage.getItem('mp401-gameMode') || '2p'; // '2p' | 'ai' | 'sampler'
+let aiMistakeRate = 0;  // 0–0.6, randomized each AI game
 const WINS = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
 
 // ============================================================
@@ -2566,6 +2567,7 @@ function undo() {
 function resetGame() {
   deselectPad();
   stopSequencer();
+  if (gameMode === 'ai') aiMistakeRate = Math.random() * 0.6;
   board = Array(9).fill(null);
   activeCells = Array(9).fill(false);
   currentPlayer = 'X'; gameOver = false; history = [];
@@ -2590,8 +2592,15 @@ function resetAll() {
 // ============================================================
 function aiMove() {
   if (gameOver) return;
-  const best = minimax(board, 'O');
-  if (best && best.index !== undefined) makeMove(best.index);
+  const avail = board.map((v,i) => v === null ? i : null).filter(v => v !== null);
+  if (!avail.length) return;
+  // Random chance of suboptimal move (varies per game)
+  if (Math.random() < aiMistakeRate) {
+    makeMove(avail[Math.floor(Math.random() * avail.length)]);
+  } else {
+    const best = minimax(board, 'O');
+    if (best && best.index !== undefined) makeMove(best.index);
+  }
 }
 function minimax(b, pl) {
   const av = b.map((v,i)=>v===null?i:null).filter(v=>v!==null);
