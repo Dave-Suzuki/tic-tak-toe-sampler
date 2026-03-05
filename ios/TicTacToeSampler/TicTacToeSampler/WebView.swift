@@ -44,6 +44,7 @@ struct WebView: UIViewRepresentable {
         #endif
 
         webView.navigationDelegate = context.coordinator
+        webView.uiDelegate = context.coordinator
         context.coordinator.webView = webView
 
         if let htmlURL = Bundle.main.url(forResource: "index", withExtension: "html") {
@@ -66,7 +67,7 @@ struct WebView: UIViewRepresentable {
         Coordinator()
     }
 
-    class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
+    class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler {
         weak var webView: WKWebView?
 
         func userContentController(_ userContentController: WKUserContentController,
@@ -87,11 +88,24 @@ struct WebView: UIViewRepresentable {
         func webView(_ webView: WKWebView,
                      decidePolicyFor navigationAction: WKNavigationAction,
                      decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-            if navigationAction.navigationType == .linkActivated {
+            if navigationAction.navigationType == .linkActivated,
+               let url = navigationAction.request.url {
+                UIApplication.shared.open(url)
                 decisionHandler(.cancel)
             } else {
                 decisionHandler(.allow)
             }
+        }
+
+        // Handle target="_blank" links (WKUIDelegate)
+        func webView(_ webView: WKWebView,
+                     createWebViewWith configuration: WKWebViewConfiguration,
+                     for navigationAction: WKNavigationAction,
+                     windowFeatures: WKWindowFeatures) -> WKWebView? {
+            if let url = navigationAction.request.url {
+                UIApplication.shared.open(url)
+            }
+            return nil
         }
 
         func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
