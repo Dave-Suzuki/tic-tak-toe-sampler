@@ -57,7 +57,7 @@ https://dave-suzuki.github.io/tic-tak-toe-sampler/docs/support.html
 https://dave-suzuki.github.io/tic-tak-toe-sampler/
 
 ## Copyright
-2026 Dave Suzuki
+2026 Crosstown Experience
 
 ## Export Compliance
 Does your app use encryption? No

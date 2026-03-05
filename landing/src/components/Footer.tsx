@@ -43,7 +43,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/40">
-          <div>&copy; 2026 Dave Suzuki</div>
+          <div>&copy; 2026 <a href="mailto:info@crosstown-experience.com" className="hover:text-white/60 transition-colors">Crosstown Experience</a></div>
           <div>made with curiosity and code</div>
         </div>
       </div>
