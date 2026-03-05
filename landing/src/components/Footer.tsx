@@ -35,9 +35,6 @@ export function Footer() {
               <a href="mailto:info@crosstown-experience.com" className="hover:text-white/60 transition-colors">
                 info@crosstown-experience.com
               </a>
-              <a href="https://github.com/dave-suzuki" target="_blank" rel="noopener noreferrer" className="hover:text-white/60 transition-colors">
-                github
-              </a>
             </div>
           </div>
         </div>
